@@ -43,7 +43,7 @@ export interface ITextEditor {
  * @returns {FunctionComponent} The WYSIWYG editor component.
  */
 export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
-    /** */
+    /** The maximum allowed indent level for lists. */
     const maxIntend = 4;
 
     /** React state of the current draft-js editor state. */
