@@ -240,6 +240,36 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                         }}
                     />
                 </ControlSection>
+                <ControlSection>
+                    <IconButton
+                        iconProps={{ iconName: 'BulletedList' }}
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                            alert('todo');
+                        }}
+                    />
+                    <IconButton
+                        iconProps={{ iconName: 'NumberedList' }}
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                            alert('todo');
+                        }}
+                    />
+                    <IconButton
+                        iconProps={{ iconName: 'DecreaseIndentLegacy' }}
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                            alert('todo');
+                        }}
+                    />
+                    <IconButton
+                        iconProps={{ iconName: 'IncreaseIndentLegacy' }}
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                            alert('todo');
+                        }}
+                    />
+                </ControlSection>
             </ToolbarContainer>
             <EditorTextfieldWrapper onClick={() => editorRef.current?.focus()}>
                 <Editor
