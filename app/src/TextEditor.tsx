@@ -43,6 +43,9 @@ export interface ITextEditor {
  * @returns {FunctionComponent} The WYSIWYG editor component.
  */
 export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
+    /** */
+    const maxIntend = 4;
+
     /** React state of the current draft-js editor state. */
     const [editorState, setEditorState] = React.useState(props.initialMarkdownContent ? getEditorStateFromMarkdown(props.initialMarkdownContent) : EditorState.createEmpty());
     /** The currently selected heading type. */
@@ -143,7 +146,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
      */
     const onTab = useCallback(
         (event: KeyboardEvent) => {
-            setEditorState(RichUtils.onTab(event, editorState, 10));
+            setEditorState(RichUtils.onTab(event, editorState, maxIntend));
         },
         [editorState]
     );
@@ -271,14 +274,18 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                         iconProps={{ iconName: 'DecreaseIndentLegacy' }}
                         onMouseDown={(event) => {
                             event.preventDefault();
-                            alert('todo');
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            const e: any = { preventDefault: () => null, shiftKey: true };
+                            setEditorState(RichUtils.onTab(e, editorState, maxIntend));
                         }}
                     />
                     <IconButton
                         iconProps={{ iconName: 'IncreaseIndentLegacy' }}
                         onMouseDown={(event) => {
                             event.preventDefault();
-                            alert('todo');
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            const e: any = { preventDefault: () => null };
+                            setEditorState(RichUtils.onTab(e, editorState, maxIntend));
                         }}
                     />
                 </ControlSection>
