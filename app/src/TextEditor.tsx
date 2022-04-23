@@ -43,7 +43,7 @@ export interface ITextEditor {
  */
 export const TextEditor = (props: ITextEditor) => {
     /** React state of the current draft-js editor state. */
-    const [editorState, setEditorState] = React.useState(() => EditorState.createEmpty());
+    const [editorState, setEditorState] = React.useState(props.initialMarkdownContent ? getEditorStateFromMarkdown(props.initialMarkdownContent) : EditorState.createEmpty());
     /** The currently selected heading type. */
     const [selectedHeading, setSelectedHeading] = useState<string | number>('paragraph');
 
@@ -60,20 +60,6 @@ export const TextEditor = (props: ITextEditor) => {
         const newMarkdown = exportEditorStateToMarkdownString(editorState);
         props.handleContentUpdate(newMarkdown);
     }, [editorState, props]);
-
-    /** Initialize the editor state using the markdown string property. */
-    useEffect(() => {
-        if (!props.initialMarkdownContent) {
-            // If there is no initial value given, return.
-            return;
-        }
-        // Get the editor state based on the given markdown property.
-        const initialEditorState = getEditorStateFromMarkdown(props.initialMarkdownContent);
-        // Store the new editor state.
-        setEditorState(initialEditorState);
-        // Ensure that the initialization is only done once!
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     /**
      * Handle keyboard shortcuts in the draft-js editor.

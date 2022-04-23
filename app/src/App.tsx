@@ -13,7 +13,7 @@ const AppContainer = styled.div`
 
 const App = () => {
     /** The state of the current markdown content value. */
-    const [markdown, setMarkdown] = useState<string>();
+    const [markdown, setMarkdown] = useState<string>('');
 
     /** Handle updates on the markdown content value. */
     useEffect(() => {
