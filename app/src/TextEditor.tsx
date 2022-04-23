@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import React, { FunctionComponent, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { Editor, EditorState, RichUtils, DraftEditorCommand } from 'draft-js';
 import styled from 'styled-components';
 import { Dropdown, IconButton, IDropdownOption } from '@fluentui/react';
@@ -26,6 +26,7 @@ const ControlSection = styled.div`
 
 const EditorTextfieldWrapper = styled.div`
     padding: 15px;
+    flex: 1;
 `;
 
 export interface ITextEditor {
@@ -46,6 +47,8 @@ export const TextEditor = (props: ITextEditor) => {
     const [editorState, setEditorState] = React.useState(props.initialMarkdownContent ? getEditorStateFromMarkdown(props.initialMarkdownContent) : EditorState.createEmpty());
     /** The currently selected heading type. */
     const [selectedHeading, setSelectedHeading] = useState<string | number>('paragraph');
+    /** Reference to the draft-js editor component. */
+    const editorRef = useRef<Editor>();
 
     /** Options for the heading dropdown */
     const headingOptions: IDropdownOption[] = [
@@ -86,16 +89,18 @@ export const TextEditor = (props: ITextEditor) => {
             const selection = editorState.getSelection();
             if (!selection.isCollapsed()) {
                 setEditorState(RichUtils.toggleInlineStyle(editorState, inlineStyle));
-                return;
-            }
-            const currentInlineStyle = editorState.getCurrentInlineStyle();
-            if (currentInlineStyle.has(inlineStyle)) {
-                // todo: remove
-                console.log('remove');
             } else {
-                //todo: add
-                console.log('add');
+                const currentInlineStyle = editorState.getCurrentInlineStyle();
+                if (currentInlineStyle.has(inlineStyle)) {
+                    // todo: remove
+                    console.log('remove');
+                } else {
+                    //todo: add
+                    console.log('add');
+                }
             }
+            // Move the users focus back into the editor input field.
+            setTimeout(() => editorRef.current?.focus(), 1);
         },
         [editorState]
     );
@@ -108,6 +113,8 @@ export const TextEditor = (props: ITextEditor) => {
     const applyBlockStyle = useCallback(
         (blockStyle: string) => {
             setEditorState(RichUtils.toggleBlockType(editorState, blockStyle));
+            // Move the users focus back into the editor input field.
+            setTimeout(() => editorRef.current?.focus(), 100);
         },
         [editorState]
     );
@@ -178,8 +185,8 @@ export const TextEditor = (props: ITextEditor) => {
                     <IconButton iconProps={{ iconName: 'Underline' }} onClick={onUnderlineClick} />
                 </ControlSection>
             </ToolbarContainer>
-            <EditorTextfieldWrapper>
-                <Editor editorState={editorState} onChange={setEditorState} handleKeyCommand={handleKeyCommand} />
+            <EditorTextfieldWrapper onClick={() => editorRef.current?.focus()}>
+                <Editor ref={editorRef as MutableRefObject<Editor>} editorState={editorState} onChange={setEditorState} handleKeyCommand={handleKeyCommand} />
             </EditorTextfieldWrapper>
         </EditorContainer>
     );
