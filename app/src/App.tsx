@@ -17,13 +17,13 @@ const App = () => {
 
     /** Handle updates on the markdown content value. */
     useEffect(() => {
-        //console.log(markdown);
+        console.log(markdown);
     }, [markdown]);
 
     return (
         <AppContainer>
             <h2>Markdown WYSIWYG</h2>
-            <TextEditor handleContentUpdate={(newMarkdown: string) => setMarkdown(newMarkdown)} />
+            <TextEditor initialMarkdownContent={markdown} handleContentUpdate={(newMarkdown: string) => setMarkdown(newMarkdown)} />
         </AppContainer>
     );
 };

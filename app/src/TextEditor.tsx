@@ -1,9 +1,9 @@
 import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
-import { Editor, EditorState, RichUtils, convertToRaw, convertFromRaw, DraftEditorCommand } from 'draft-js';
+import { Editor, EditorState, RichUtils, DraftEditorCommand } from 'draft-js';
 import styled from 'styled-components';
-import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js';
 import { Dropdown, IconButton, IDropdownOption } from '@fluentui/react';
 import 'draft-js/dist/Draft.css';
+import { exportEditorStateToMarkdownString, getEditorStateFromMarkdown } from './MarkdownParser';
 
 const EditorContainer = styled.div`
     border: 1px solid black;
@@ -54,32 +54,6 @@ export const TextEditor = (props: ITextEditor) => {
         { key: 'heading-2', text: 'Headline 2' },
         { key: 'heading-3', text: 'Headline 3' },
     ];
-
-    /**
-     * Convert a given markdown string into a new draft-js editor state.
-     *
-     * @param {string} markdownString The string representation of a markdown value.
-     * @returns {EditorState} The editor state to use for the base draft-js WYSIWYG editor.
-     */
-    const getEditorStateFromMarkdown = (markdownString: string): EditorState => {
-        const rawObject = markdownToDraft(markdownString);
-        const contentState = convertFromRaw(rawObject);
-        const editorState = new EditorState(contentState);
-        return editorState;
-    };
-
-    /**
-     * Convert a given draft-js editor state into a markdown string.
-     *
-     * @param {EditorState} editorState The draft-js WYSIWYG editor state.
-     * @returns {string} The markdown string representation of the current draft-js WYSIWYG editor state.
-     */
-    const exportEditorStateToMarkdownString = (editorState: EditorState): string => {
-        const draftContent = editorState.getCurrentContent();
-        const rawDraftContent = convertToRaw(draftContent);
-        const markdown = draftToMarkdown(rawDraftContent);
-        return markdown;
-    };
 
     /** Handle editor state updates by calling the property callback. */
     useEffect(() => {
@@ -165,6 +139,13 @@ export const TextEditor = (props: ITextEditor) => {
     }, [applyInlineStyle]);
 
     /**
+     * Click handler to apply UNDERLINE style.
+     */
+    const onUnderlineClick = useCallback(() => {
+        applyInlineStyle('UNDERLINE');
+    }, [applyInlineStyle]);
+
+    /**
      * On change handler for the heading dropdown.
      * Applies the selected heading type to the current editor block.
      *
@@ -206,7 +187,7 @@ export const TextEditor = (props: ITextEditor) => {
                 <ControlSection>
                     <IconButton iconProps={{ iconName: 'Bold' }} onClick={onBoldClick} />
                     <IconButton iconProps={{ iconName: 'Italic' }} onClick={onItalicClick} />
-                    <IconButton iconProps={{ iconName: 'Underline' }} onClick={onItalicClick} />
+                    <IconButton iconProps={{ iconName: 'Underline' }} onClick={onUnderlineClick} />
                 </ControlSection>
             </ToolbarContainer>
             <EditorTextfieldWrapper>
