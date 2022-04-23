@@ -137,6 +137,18 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     );
 
     /**
+     * Handle what happens when the user press tab.
+     *
+     * @param {KeyboardEvent} event The occurred keyboard event.
+     */
+    const onTab = useCallback(
+        (event: KeyboardEvent) => {
+            setEditorState(RichUtils.onTab(event, editorState, 10));
+        },
+        [editorState]
+    );
+
+    /**
      * Mouse down handler to apply BOLD style.
      */
     const onBoldMouseDown = useCallback(() => {
@@ -273,6 +285,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
             </ToolbarContainer>
             <EditorTextfieldWrapper onClick={() => editorRef.current?.focus()}>
                 <Editor
+                    onTab={onTab}
                     handleReturn={handleReturn}
                     ref={editorRef as MutableRefObject<Editor>}
                     editorState={editorState}
