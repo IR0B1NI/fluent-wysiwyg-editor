@@ -71,7 +71,9 @@ export const TextEditor = (props: ITextEditor) => {
         const initialEditorState = getEditorStateFromMarkdown(props.initialMarkdownContent);
         // Store the new editor state.
         setEditorState(initialEditorState);
-    }, [props.initialMarkdownContent]);
+        // Ensure that the initialization is only done once!
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     /**
      * Handle keyboard shortcuts in the draft-js editor.
