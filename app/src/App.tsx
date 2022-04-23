@@ -17,7 +17,7 @@ const App = () => {
 
     /** Handle updates on the markdown content value. */
     useEffect(() => {
-        console.log(markdown);
+        //console.log(markdown);
     }, [markdown]);
 
     return (

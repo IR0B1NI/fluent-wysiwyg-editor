@@ -42,7 +42,7 @@ export interface ITextEditor {
  * @param {ITextEditor} props The properties of the WYSIWYG editor.
  * @returns {FunctionComponent} The WYSIWYG editor component.
  */
-export const TextEditor = (props: ITextEditor) => {
+export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     /** React state of the current draft-js editor state. */
     const [editorState, setEditorState] = React.useState(props.initialMarkdownContent ? getEditorStateFromMarkdown(props.initialMarkdownContent) : EditorState.createEmpty());
     /** The currently selected heading type. */
@@ -53,9 +53,9 @@ export const TextEditor = (props: ITextEditor) => {
     /** Options for the heading dropdown */
     const headingOptions: IDropdownOption[] = [
         { key: 'paragraph', text: 'Paragraph' },
-        { key: 'heading-1', text: 'Headline 1' },
-        { key: 'heading-2', text: 'Headline 2' },
-        { key: 'heading-3', text: 'Headline 3' },
+        { key: 'header-one', text: 'Headline 1' },
+        { key: 'header-two', text: 'Headline 2' },
+        { key: 'header-three', text: 'Headline 3' },
     ];
 
     /** Handle editor state updates by calling the property callback. */
@@ -152,26 +152,46 @@ export const TextEditor = (props: ITextEditor) => {
             if (!option) {
                 return;
             }
+            let keyToSet = option.key;
             switch (option.key) {
                 case 'paragraph':
-                    applyBlockStyle('');
+                    applyBlockStyle('paragraph');
                     break;
-                case 'heading-1':
+                case 'header-one':
                     applyBlockStyle('header-one');
                     break;
-                case 'heading-2':
+                case 'header-two':
                     applyBlockStyle('header-two');
                     break;
-                case 'heading-3':
+                case 'header-three':
                     applyBlockStyle('header-three');
                     break;
                 default:
+                    keyToSet = 'paragraph';
                     break;
             }
-            setSelectedHeading(option.key);
+            setSelectedHeading(keyToSet);
         },
         [applyBlockStyle]
     );
+
+    useEffect(() => {
+        // Get the selection.
+        const currentSelection = editorState.getSelection();
+        // Get the anchor key.
+        const anchorKey = currentSelection.getAnchorKey();
+        // Get the current content.
+        const currentContent = editorState.getCurrentContent();
+        // Get the content block of the current content.
+        const currentContentBlock = currentContent.getBlockForKey(anchorKey);
+        const currentBlockType = currentContentBlock.getType();
+        if (currentBlockType === 'unstyled') {
+            applyBlockStyle('paragraph');
+            return;
+        }
+        // Update the block type dropdown.
+        setSelectedHeading(currentBlockType);
+    }, [applyBlockStyle, editorState]);
 
     return (
         <EditorContainer>
