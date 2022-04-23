@@ -207,23 +207,6 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
         [applyBlockStyle]
     );
 
-    /**
-     * Custom key binding function.
-     *
-     * @param {KeyboardEvent} event
-     * @returns {string | null} The name of the command to trigger.
-     */
-    const keyBindingFn = useCallback(
-        (event: KeyboardEvent): string | null => {
-            if (event.key === 'Tab') {
-                onTab(event);
-                return null;
-            }
-            return null;
-        },
-        [onTab]
-    );
-
     /** Handle changes in block type. */
     useEffect(() => {
         // Get the selection.
@@ -314,7 +297,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                     editorState={editorState}
                     onChange={setEditorState}
                     handleKeyCommand={handleKeyCommand}
-                    keyBindingFn={keyBindingFn}
+                    onTab={onTab}
                 />
             </EditorTextfieldWrapper>
         </EditorContainer>
