@@ -1,6 +1,7 @@
 {
     "name": "fluent-markdown-wysiwyg",
     "version": "0.1.0",
+    "homepage": "https://ir0b1ni.github.io/fluent-markdown-wysiwyg",
     "private": false,
     "license": "MIT",
     "dependencies": {
@@ -22,6 +23,8 @@
         "typescript": "^4.4.2"
     },
     "scripts": {
+        "predeploy": "npm run build",
+        "deploy": "gh-pages -d build",
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
@@ -53,6 +56,7 @@
         "eslint-plugin-jsx-a11y": "^6.2.3",
         "eslint-plugin-prettier": "^4.0.0",
         "eslint-plugin-react": "^7.29.4",
-        "eslint-plugin-react-hooks": "^4.4.0"
+        "eslint-plugin-react-hooks": "^4.4.0",
+        "gh-pages": "^3.2.3"
     }
 }
