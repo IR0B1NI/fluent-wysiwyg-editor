@@ -1,5 +1,5 @@
-import React, { FunctionComponent, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
-import { Editor, EditorState, RichUtils, DraftEditorCommand } from 'draft-js';
+import React, { FunctionComponent, MutableRefObject, useCallback, useEffect, useRef, useState, KeyboardEvent } from 'react';
+import { Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue } from 'draft-js';
 import styled from 'styled-components';
 import { Dropdown, IconButton, IDropdownOption } from '@fluentui/react';
 import 'draft-js/dist/Draft.css';
@@ -65,24 +65,6 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     }, [editorState, props]);
 
     /**
-     * Handle keyboard shortcuts in the draft-js editor.
-     *
-     * @param {DraftEditorCommand} command The command to execute.
-     * @param {EditorState} editorState The editor state to modify.
-     */
-    const handleKeyCommand = useCallback((command: DraftEditorCommand, editorState: EditorState) => {
-        if (command === 'backspace') {
-            return 'not-handled';
-        }
-        const newState = RichUtils.handleKeyCommand(editorState, command);
-        if (newState) {
-            setEditorState(newState);
-            return 'handled';
-        }
-        return 'not-handled';
-    }, []);
-
-    /**
      * General function to apply an inline style to the current draft-js editor state.
      *
      * @param {string} inlineStyle The style name to apply.
@@ -114,6 +96,42 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
             setEditorState(RichUtils.toggleBlockType(editorState, blockStyle));
             // Move the users focus back into the editor input field.
             setTimeout(() => editorRef.current?.focus(), 100);
+        },
+        [editorState]
+    );
+
+    /**
+     * Handle keyboard shortcuts in the draft-js editor.
+     *
+     * @param {DraftEditorCommand} command The command to execute.
+     * @param {EditorState} editorState The editor state to modify.
+     * @returns {DraftHandleValue} The draft handle value.
+     */
+    const handleKeyCommand = useCallback((command: DraftEditorCommand, editorState: EditorState): DraftHandleValue => {
+        if (command === 'backspace') {
+            return 'not-handled';
+        }
+        const newState = RichUtils.handleKeyCommand(editorState, command);
+        if (newState) {
+            setEditorState(newState);
+            return 'handled';
+        }
+        return 'not-handled';
+    }, []);
+
+    /**
+     * Handle what happens when the user presses the return key.
+     *
+     * @param {KeyboardEvent} event The occurred keyboard event.
+     * @returns {DraftHandleValue} The draft handle value.
+     */
+    const handleReturn = useCallback(
+        (event: KeyboardEvent): DraftHandleValue => {
+            if (event.shiftKey) {
+                setEditorState(RichUtils.insertSoftNewline(editorState));
+                return 'handled';
+            }
+            return 'not-handled';
         },
         [editorState]
     );
@@ -174,6 +192,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
         [applyBlockStyle]
     );
 
+    /** Handle changes in block type. */
     useEffect(() => {
         // Get the selection.
         const currentSelection = editorState.getSelection();
@@ -223,7 +242,13 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                 </ControlSection>
             </ToolbarContainer>
             <EditorTextfieldWrapper onClick={() => editorRef.current?.focus()}>
-                <Editor ref={editorRef as MutableRefObject<Editor>} editorState={editorState} onChange={setEditorState} handleKeyCommand={handleKeyCommand} />
+                <Editor
+                    handleReturn={handleReturn}
+                    ref={editorRef as MutableRefObject<Editor>}
+                    editorState={editorState}
+                    onChange={setEditorState}
+                    handleKeyCommand={handleKeyCommand}
+                />
             </EditorTextfieldWrapper>
         </EditorContainer>
     );
