@@ -245,14 +245,14 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                         iconProps={{ iconName: 'BulletedList' }}
                         onMouseDown={(event) => {
                             event.preventDefault();
-                            alert('todo');
+                            applyBlockStyle('unordered-list-item');
                         }}
                     />
                     <IconButton
                         iconProps={{ iconName: 'NumberedList' }}
                         onMouseDown={(event) => {
                             event.preventDefault();
-                            alert('todo');
+                            applyBlockStyle('ordered-list-item');
                         }}
                     />
                     <IconButton
