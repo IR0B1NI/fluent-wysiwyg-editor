@@ -71,6 +71,10 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
      * @param {EditorState} editorState The editor state to modify.
      */
     const handleKeyCommand = useCallback((command: DraftEditorCommand, editorState: EditorState) => {
+        console.log(command);
+        if (command === 'backspace') {
+            return 'not-handled';
+        }
         const newState = RichUtils.handleKeyCommand(editorState, command);
         if (newState) {
             setEditorState(newState);
