@@ -93,13 +93,9 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
             if (!selection.isCollapsed()) {
                 setEditorState(RichUtils.toggleInlineStyle(editorState, inlineStyle));
             } else {
-                const currentInlineStyle = editorState.getCurrentInlineStyle();
-                if (currentInlineStyle.has(inlineStyle)) {
-                    // todo: remove
-                    console.log('remove');
-                } else {
-                    //todo: add
-                    console.log('add');
+                const newState = RichUtils.toggleInlineStyle(editorState, inlineStyle);
+                if (newState) {
+                    setEditorState(newState);
                 }
             }
             // Move the users focus back into the editor input field.
@@ -123,23 +119,23 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     );
 
     /**
-     * Click handler to apply BOLD style.
+     * Mouse down handler to apply BOLD style.
      */
-    const onBoldClick = useCallback(() => {
+    const onBoldMouseDown = useCallback(() => {
         applyInlineStyle('BOLD');
     }, [applyInlineStyle]);
 
     /**
-     * Click handler to apply ITALIC style.
+     * Mouse down handler to apply ITALIC style.
      */
-    const onItalicClick = useCallback(() => {
+    const onItalicMouseDown = useCallback(() => {
         applyInlineStyle('ITALIC');
     }, [applyInlineStyle]);
 
     /**
-     * Click handler to apply UNDERLINE style.
+     * Mouse down handler to apply UNDERLINE style.
      */
-    const onUnderlineClick = useCallback(() => {
+    const onUnderlineMouseDown = useCallback(() => {
         applyInlineStyle('UNDERLINE');
     }, [applyInlineStyle]);
 
@@ -203,9 +199,27 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                     <Dropdown styles={{ root: { minWidth: 150, maxWidth: 150 } }} options={headingOptions} selectedKey={selectedHeading} onChange={onHeadingChange} />
                 </ControlSection>
                 <ControlSection>
-                    <IconButton iconProps={{ iconName: 'Bold' }} onClick={onBoldClick} />
-                    <IconButton iconProps={{ iconName: 'Italic' }} onClick={onItalicClick} />
-                    <IconButton iconProps={{ iconName: 'Underline' }} onClick={onUnderlineClick} />
+                    <IconButton
+                        iconProps={{ iconName: 'Bold' }}
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                            onBoldMouseDown();
+                        }}
+                    />
+                    <IconButton
+                        iconProps={{ iconName: 'Italic' }}
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                            onItalicMouseDown();
+                        }}
+                    />
+                    <IconButton
+                        iconProps={{ iconName: 'Underline' }}
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                            onUnderlineMouseDown();
+                        }}
+                    />
                 </ControlSection>
             </ToolbarContainer>
             <EditorTextfieldWrapper onClick={() => editorRef.current?.focus()}>
