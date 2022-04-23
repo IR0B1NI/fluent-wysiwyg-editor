@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { TextEditor } from './Editor';
+import { TextEditor } from './TextEditor';
 
 const AppContainer = styled.div`
     display: flex;

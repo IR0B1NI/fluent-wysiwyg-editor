@@ -1,19 +1,31 @@
-import React, { FunctionComponent, useCallback, useEffect } from 'react';
+import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import { Editor, EditorState, RichUtils, convertToRaw, convertFromRaw, DraftEditorCommand } from 'draft-js';
 import styled from 'styled-components';
 import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js';
+import { Dropdown, IconButton, IDropdownOption } from '@fluentui/react';
 import 'draft-js/dist/Draft.css';
 
 const EditorContainer = styled.div`
     border: 1px solid black;
     display: flex;
     flex-direction: column;
+    min-height: 500px;
 `;
 
 const ToolbarContainer = styled.div`
     display: flex;
-    background: gray;
-    padding: 5px;
+    margin: 5px;
+    padding: 5px 0;
+    border-bottom: 1px solid black;
+    align-items: center;
+`;
+
+const ControlSection = styled.div`
+    margin-right: 25px;
+`;
+
+const EditorTextfieldWrapper = styled.div`
+    padding: 15px;
 `;
 
 export interface ITextEditor {
@@ -32,6 +44,16 @@ export interface ITextEditor {
 export const TextEditor = (props: ITextEditor) => {
     /** React state of the current draft-js editor state. */
     const [editorState, setEditorState] = React.useState(() => EditorState.createEmpty());
+    /** The currently selected heading type. */
+    const [selectedHeading, setSelectedHeading] = useState<string | number>('paragraph');
+
+    /** Options for the heading dropdown */
+    const headingOptions: IDropdownOption[] = [
+        { key: 'paragraph', text: 'Paragraph' },
+        { key: 'heading-1', text: 'Headline 1' },
+        { key: 'heading-2', text: 'Headline 2' },
+        { key: 'heading-3', text: 'Headline 3' },
+    ];
 
     /**
      * Convert a given markdown string into a new draft-js editor state.
@@ -117,6 +139,18 @@ export const TextEditor = (props: ITextEditor) => {
     );
 
     /**
+     * General function to apply a block style to the current draft-js editor state.
+     *
+     * @param {string} blockStyle The style to apply to the current editor block
+     */
+    const applyBlockStyle = useCallback(
+        (blockStyle: string) => {
+            setEditorState(RichUtils.toggleBlockType(editorState, blockStyle));
+        },
+        [editorState]
+    );
+
+    /**
      * Click handler to apply BOLD style.
      */
     const onBoldClick = useCallback(() => {
@@ -130,13 +164,54 @@ export const TextEditor = (props: ITextEditor) => {
         applyInlineStyle('ITALIC');
     }, [applyInlineStyle]);
 
+    /**
+     * On change handler for the heading dropdown.
+     * Applies the selected heading type to the current editor block.
+     *
+     * @param {React.FormEvent<HTMLDivElement>} _ The occurred form event.
+     * @param {IDropdownOption | undefined} option The selected dropdown option.
+     */
+    const onHeadingChange = useCallback(
+        (_: React.FormEvent<HTMLDivElement>, option?: IDropdownOption | undefined) => {
+            if (!option) {
+                return;
+            }
+            switch (option.key) {
+                case 'paragraph':
+                    applyBlockStyle('');
+                    break;
+                case 'heading-1':
+                    applyBlockStyle('header-one');
+                    break;
+                case 'heading-2':
+                    applyBlockStyle('header-two');
+                    break;
+                case 'heading-3':
+                    applyBlockStyle('header-three');
+                    break;
+                default:
+                    break;
+            }
+            setSelectedHeading(option.key);
+        },
+        [applyBlockStyle]
+    );
+
     return (
         <EditorContainer>
             <ToolbarContainer>
-                <button onClick={onBoldClick}>BOLD</button>
-                <button onClick={onItalicClick}>ITALIC</button>
+                <ControlSection>
+                    <Dropdown styles={{ root: { minWidth: 150, maxWidth: 150 } }} options={headingOptions} selectedKey={selectedHeading} onChange={onHeadingChange} />
+                </ControlSection>
+                <ControlSection>
+                    <IconButton iconProps={{ iconName: 'Bold' }} onClick={onBoldClick} />
+                    <IconButton iconProps={{ iconName: 'Italic' }} onClick={onItalicClick} />
+                    <IconButton iconProps={{ iconName: 'Underline' }} onClick={onItalicClick} />
+                </ControlSection>
             </ToolbarContainer>
-            <Editor editorState={editorState} onChange={setEditorState} handleKeyCommand={handleKeyCommand} />
+            <EditorTextfieldWrapper>
+                <Editor editorState={editorState} onChange={setEditorState} handleKeyCommand={handleKeyCommand} />
+            </EditorTextfieldWrapper>
         </EditorContainer>
     );
 };
