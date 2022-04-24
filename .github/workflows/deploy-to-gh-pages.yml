@@ -11,6 +11,5 @@ jobs:
     deploy-gh-pages:
         runs-on: ubuntu-latest
         steps:
-            - run: |
-                yarn
-                yarn run deploy
+            - run: echo $(ls)
+
