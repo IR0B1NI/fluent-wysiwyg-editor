@@ -7,7 +7,7 @@ on:
 
 defaults:
   run:
-    working-directory: ./app
+    working-directory: app
     
 
 jobs:
