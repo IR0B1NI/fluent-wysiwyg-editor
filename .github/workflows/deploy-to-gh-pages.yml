@@ -1,11 +1,6 @@
 name: Deploy to GitHub Pages
 on:
-    workflow_dispatch:
-
-defaults:
-  run:
-    working-directory: app
-    
+    workflow_dispatch:    
 
 jobs:
     deploy-gh-pages:
