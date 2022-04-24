@@ -22,7 +22,7 @@ const App = () => {
 
     return (
         <AppContainer>
-            <h2>Markdown WYSIWYG editor:</h2>
+            <h2>Markdown WYSIWYG:</h2>
             <TextEditor initialMarkdownContent={markdown} handleContentUpdate={(newMarkdown: string) => setMarkdown(newMarkdown)} />
         </AppContainer>
     );

@@ -1,6 +1,9 @@
 name: Build and Deploy
 on:
-    workflow_dispatch:
+    pull_request:
+        branches:
+            - main
+        types: [closed]
 
 jobs:
     build-and-deploy:
