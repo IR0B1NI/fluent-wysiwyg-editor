@@ -1,0 +1,13 @@
+name: Deploy to GitHub Pages
+on:
+    workflow_dispatch:    
+
+jobs:
+    deploy-gh-pages:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - working-directory: app
+            - run: |
+                yarn
+                yarn run deploy
