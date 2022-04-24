@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/fluent-markdown-wysiwyg/static/css/main.3d5ed981.css",
-    "main.js": "/fluent-markdown-wysiwyg/static/js/main.7b39f093.js",
+    "main.js": "/fluent-markdown-wysiwyg/static/js/main.4e65b02c.js",
     "index.html": "/fluent-markdown-wysiwyg/index.html",
     "main.3d5ed981.css.map": "/fluent-markdown-wysiwyg/static/css/main.3d5ed981.css.map",
-    "main.7b39f093.js.map": "/fluent-markdown-wysiwyg/static/js/main.7b39f093.js.map"
+    "main.4e65b02c.js.map": "/fluent-markdown-wysiwyg/static/js/main.4e65b02c.js.map"
   },
   "entrypoints": [
     "static/css/main.3d5ed981.css",
-    "static/js/main.7b39f093.js"
+    "static/js/main.4e65b02c.js"
   ]
 }
