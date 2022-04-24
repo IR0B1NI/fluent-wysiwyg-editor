@@ -96,6 +96,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
      */
     const applyBlockStyle = useCallback(
         (blockStyle: string) => {
+            // Toggle the block style.
             setEditorState(RichUtils.toggleBlockType(editorState, blockStyle));
             // Move the users focus back into the editor input field.
             setTimeout(() => editorRef.current?.focus(), 100);
@@ -219,7 +220,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
         const currentContentBlock = currentContent.getBlockForKey(anchorKey);
         const currentBlockType = currentContentBlock.getType();
         if (currentBlockType === 'unstyled') {
-            applyBlockStyle('paragraph');
+            setSelectedHeading('paragraph');
             return;
         }
         // Update the block type dropdown.
