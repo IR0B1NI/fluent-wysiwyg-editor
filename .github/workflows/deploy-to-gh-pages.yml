@@ -9,5 +9,4 @@ jobs:
     deploy-gh-pages:
         runs-on: ubuntu-latest
         steps:
-            - run: cd app
-            - run: yarn run deploy
+            - run: ls
