@@ -6,7 +6,9 @@ This is the project to build a WYSIWYG editor on top of [draft-js](https://githu
 
 ## Testing
 
-To test this markdown editor, perform the following steps:
+To test the editor online open this [LINK0(https://ir0b1ni.github.io/fluent-markdown-wysiwyg/)
+
+To test this markdown editor locally on your device, perform the following steps:
 
 1. Clone this repo
 2. Open a terminal
