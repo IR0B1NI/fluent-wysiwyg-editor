@@ -8,8 +8,8 @@ import { exportEditorStateToMarkdownString, getEditorStateFromMarkdown } from '.
 const EditorContainer = styled.div`
     border: 1px solid black;
     display: flex;
+    flex: 1;
     flex-direction: column;
-    min-height: 500px;
 `;
 
 const ToolbarContainer = styled.div`
