@@ -7,7 +7,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
-            - working-directory: app
             - run: |
+                cd app
                 yarn
                 yarn run deploy
