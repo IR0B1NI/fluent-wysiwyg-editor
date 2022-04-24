@@ -1,4 +1,4 @@
-import React, { FunctionComponent, MutableRefObject, useCallback, useEffect, useRef, useState, KeyboardEvent } from 'react';
+import React, { FunctionComponent, MutableRefObject, useCallback, useEffect, useRef, useState, KeyboardEvent, FormEvent } from 'react';
 import { Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue } from 'draft-js';
 import styled from 'styled-components';
 import { Dropdown, IconButton, IDropdownOption } from '@fluentui/react';
@@ -84,7 +84,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                 }
             }
             // Move the users focus back into the editor input field.
-            setTimeout(() => editorRef.current?.focus(), 1);
+            setTimeout(() => editorRef.current?.focus(), 0);
         },
         [editorState]
     );
@@ -99,7 +99,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
             // Toggle the block style.
             setEditorState(RichUtils.toggleBlockType(editorState, blockStyle));
             // Move the users focus back into the editor input field.
-            setTimeout(() => editorRef.current?.focus(), 100);
+            setTimeout(() => editorRef.current?.focus(), 0);
         },
         [editorState]
     );
@@ -181,7 +181,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
      * @param {IDropdownOption | undefined} option The selected dropdown option.
      */
     const onHeadingChange = useCallback(
-        (_: React.FormEvent<HTMLDivElement>, option?: IDropdownOption | undefined) => {
+        (_: FormEvent<HTMLDivElement>, option?: IDropdownOption | undefined) => {
             if (!option) {
                 return;
             }
