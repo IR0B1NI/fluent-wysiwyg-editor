@@ -5,8 +5,15 @@ on:
             - main
         types: [closed]
 
+defaults:
+  run:
+    working-directory: ./app
+    
+
 jobs:
     deploy-gh-pages:
         runs-on: ubuntu-latest
         steps:
-            - run: ls
+            - run: |
+                yarn
+                yarn run deploy
