@@ -1,12 +1,12 @@
-# fluent-markdown-wysiwyg
+# fluent-wysiwyg-editor
 
 ## About
 
-This is the project to build a WYSIWYG editor on top of [draft-js](https://github.com/facebook/draft-js) that takes and exports it's editor state using markdown. [fluentui](https://github.com/microsoft/fluentui) is used for controls and styles.
+This is the project to build a WYSIWYG editor on top of [draft-js](https://github.com/facebook/draft-js) that takes and exports it's editor state using different formats. [fluentui](https://github.com/microsoft/fluentui) is used for controls and styles.
 
 ## Testing
 
-To test the editor online open this [LINK](https://ir0b1ni.github.io/fluent-markdown-wysiwyg/)
+To test the editor online open this [LINK](https://ir0b1ni.github.io/fluent-wysiwyg-editor/)
 
 To test this markdown editor locally on your device, perform the following steps:
 
