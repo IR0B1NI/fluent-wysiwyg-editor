@@ -39,7 +39,7 @@ const App = () => {
     /** The state of the current string content value. */
     const [stringContent, setStringContent] = useState<string>('');
     /** The currently selected content type key. */
-    const [selectedContentType, setSelectedContentType] = useState<string | number>('markdown');
+    const [selectedContentType, setSelectedContentType] = useState<'markdown' | 'html'>('markdown');
 
     /** Options for the content type dropdown. */
     const contentTypeDropdownOptions: IDropdownOption[] = [
@@ -59,16 +59,18 @@ const App = () => {
                             if (!option) {
                                 return;
                             }
-                            setSelectedContentType(option.key);
+                            if (option.key === 'markdown' || option.key === 'html') {
+                                setSelectedContentType(option.key);
+                            }
                         }}
                     />
                     <h2>Editor</h2>
                 </AppHeadlineContainer>
                 <SingleContentWrapper>
-                    <TextEditor initialMarkdownContent={stringContent} handleContentUpdate={(newMarkdown: string) => setStringContent(newMarkdown)} />
+                    <TextEditor initialContent={stringContent} contentType={selectedContentType} handleContentUpdate={(newContent: string) => setStringContent(newContent)} />
                 </SingleContentWrapper>
                 <AppHeadlineContainer>
-                    <h2>Generated Markdown</h2>
+                    <h2>Generated {selectedContentType === 'markdown' ? 'Markdown' : 'HTML'}</h2>
                 </AppHeadlineContainer>
                 <SingleContentWrapper>
                     <MarkdownPreview value={stringContent} readOnly />
