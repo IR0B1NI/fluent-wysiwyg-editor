@@ -3,7 +3,7 @@ import { Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue } 
 import styled from 'styled-components';
 import { Dropdown, IconButton, IDropdownOption } from '@fluentui/react';
 import 'draft-js/dist/Draft.css';
-import { exportEditorStateToMarkdownString, getEditorStateFromMarkdown } from './MarkdownParser';
+import { exportEditorStateToHtmlString, exportEditorStateToMarkdownString, getEditorStateFromHtml, getEditorStateFromMarkdown } from './Parser';
 
 const EditorContainer = styled.div`
     border: 1px solid black;
@@ -30,10 +30,12 @@ const EditorTextfieldWrapper = styled.div`
 `;
 
 export interface ITextEditor {
-    /** The initial content as markdown string. */
-    initialMarkdownContent?: string;
-    /** Callback to execute when the markdown value changes. */
-    handleContentUpdate: (newMarkdownContent: string) => void;
+    /** The initial content as string. */
+    initialContent?: string;
+    /** The content type to import / export. */
+    contentType: 'markdown' | 'html';
+    /** Callback to execute when the value changes. */
+    handleContentUpdate: (newContent: string) => void;
 }
 
 /**
@@ -47,7 +49,13 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     const maxIntend = 4;
 
     /** React state of the current draft-js editor state. */
-    const [editorState, setEditorState] = React.useState(props.initialMarkdownContent ? getEditorStateFromMarkdown(props.initialMarkdownContent) : EditorState.createEmpty());
+    const [editorState, setEditorState] = React.useState(
+        props.initialContent && props.contentType === 'markdown'
+            ? getEditorStateFromMarkdown(props.initialContent)
+            : props.initialContent && props.contentType === 'html'
+                ? getEditorStateFromHtml(props.initialContent)
+                : EditorState.createEmpty()
+    );
     /** The currently selected heading type. */
     const [selectedHeading, setSelectedHeading] = useState<string | number>('paragraph');
     /** Reference to the draft-js editor component. */
@@ -63,8 +71,13 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
 
     /** Handle editor state updates by calling the property callback. */
     useEffect(() => {
-        const newMarkdown = exportEditorStateToMarkdownString(editorState);
-        props.handleContentUpdate(newMarkdown);
+        let newContent = '';
+        if (props.contentType === 'markdown') {
+            newContent = exportEditorStateToMarkdownString(editorState);
+        } else if (props.contentType === 'html') {
+            newContent = exportEditorStateToHtmlString(editorState);
+        }
+        props.handleContentUpdate(newContent);
     }, [editorState, props]);
 
     /**
