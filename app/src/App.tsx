@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { Dropdown, IDropdownOption } from '@fluentui/react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { TextEditor } from './TextEditor';
 
@@ -22,8 +23,10 @@ const SingleContentWrapper = styled.div`
     flex: 1;
 `;
 
-const AppHeadline = styled.h2`
-    text-align: center;
+const AppHeadlineContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
 const MarkdownPreview = styled.textarea`
@@ -33,24 +36,42 @@ const MarkdownPreview = styled.textarea`
 `;
 
 const App = () => {
-    /** The state of the current markdown content value. */
-    const [markdown, setMarkdown] = useState<string>('');
+    /** The state of the current string content value. */
+    const [stringContent, setStringContent] = useState<string>('');
+    /** The currently selected content type key. */
+    const [selectedContentType, setSelectedContentType] = useState<string | number>('markdown');
 
-    /** Handle updates on the markdown content value. */
-    useEffect(() => {
-        console.log(markdown);
-    }, [markdown]);
+    /** Options for the content type dropdown. */
+    const contentTypeDropdownOptions: IDropdownOption[] = [
+        { key: 'markdown', text: 'Markdown' },
+        { key: 'html', text: 'HTML' },
+    ];
 
     return (
         <AppContainer>
             <ContentContainer>
-                <AppHeadline>Markdown Editor</AppHeadline>
+                <AppHeadlineContainer>
+                    <Dropdown
+                        styles={{ root: { minWidth: 120, marginRight: 25 } }}
+                        options={contentTypeDropdownOptions}
+                        selectedKey={selectedContentType}
+                        onChange={(_: React.FormEvent<HTMLDivElement>, option?: IDropdownOption | undefined) => {
+                            if (!option) {
+                                return;
+                            }
+                            setSelectedContentType(option.key);
+                        }}
+                    />
+                    <h2>Editor</h2>
+                </AppHeadlineContainer>
                 <SingleContentWrapper>
-                    <TextEditor initialMarkdownContent={markdown} handleContentUpdate={(newMarkdown: string) => setMarkdown(newMarkdown)} />
+                    <TextEditor initialMarkdownContent={stringContent} handleContentUpdate={(newMarkdown: string) => setStringContent(newMarkdown)} />
                 </SingleContentWrapper>
-                <AppHeadline>Generated Markdown</AppHeadline>
+                <AppHeadlineContainer>
+                    <h2>Generated Markdown</h2>
+                </AppHeadlineContainer>
                 <SingleContentWrapper>
-                    <MarkdownPreview value={markdown} readOnly />
+                    <MarkdownPreview value={stringContent} readOnly />
                 </SingleContentWrapper>
             </ContentContainer>
         </AppContainer>
