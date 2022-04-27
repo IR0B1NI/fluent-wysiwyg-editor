@@ -3,7 +3,7 @@ import { Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue } 
 import styled from 'styled-components';
 import { Dropdown, IconButton, IDropdownOption } from '@fluentui/react';
 import 'draft-js/dist/Draft.css';
-import { exportEditorStateToMarkdownString, getEditorStateFromMarkdown } from './MarkdownParser';
+import { exportEditorStateToMarkdownString, getEditorStateFromMarkdown } from './Parser';
 
 const EditorContainer = styled.div`
     border: 1px solid black;
