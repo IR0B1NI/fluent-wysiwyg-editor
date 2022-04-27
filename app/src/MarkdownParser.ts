@@ -1,5 +1,5 @@
 import { draftToMarkdown, DraftToMarkdownOptions, markdownToDraft, MarkdownToDraftOptions } from 'markdown-draft-js';
-import { EditorState, convertToRaw, convertFromRaw } from 'draft-js';
+import { EditorState, convertToRaw, convertFromRaw, convertFromHTML, ContentState } from 'draft-js';
 
 /** Custom options to convert draft to markdown. */
 const draftToMarkdownOptions: DraftToMarkdownOptions = {
@@ -51,4 +51,17 @@ export const exportEditorStateToMarkdownString = (editorState: EditorState): str
     const rawDraftContent = convertToRaw(draftContent);
     const markdown = draftToMarkdown(rawDraftContent, draftToMarkdownOptions);
     return markdown;
+};
+
+/**
+ * Convert a given html string into a new draft-js editor state.
+ *
+ * @param {string} htmlString The string representation of a html value.
+ * @returns {EditorState} The editor state to use for the base draft-js WYSIWYG editor.
+ */
+export const getEditorStateFromHtml = (htmlString: string): EditorState => {
+    const parsed = convertFromHTML(htmlString);
+    const contentState = ContentState.createFromBlockArray(parsed.contentBlocks, parsed.entityMap);
+    const editorState = EditorState.createWithContent(contentState);
+    return editorState;
 };
