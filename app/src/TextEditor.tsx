@@ -270,7 +270,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                 </ControlSection>
                 <ControlSection>
                     <IconButton
-                        styles={{ root: { backgroundColor: isBoldActive ? theme.palette.neutralLight : 'unset', marginRight: '5px' } }}
+                        styles={{ root: { backgroundColor: isBoldActive ? theme.palette.neutralQuaternary : 'unset', marginRight: '5px' } }}
                         iconProps={{ iconName: 'Bold' }}
                         onMouseDown={(event) => {
                             event.preventDefault();
@@ -278,7 +278,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                         }}
                     />
                     <IconButton
-                        styles={{ root: { backgroundColor: isItalicActive ? theme.palette.neutralLight : 'unset', marginRight: '5px' } }}
+                        styles={{ root: { backgroundColor: isItalicActive ? theme.palette.neutralQuaternary : 'unset', marginRight: '5px' } }}
                         iconProps={{ iconName: 'Italic' }}
                         onMouseDown={(event) => {
                             event.preventDefault();
@@ -286,7 +286,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                         }}
                     />
                     <IconButton
-                        styles={{ root: { backgroundColor: isUnderlineActive ? theme.palette.neutralLight : 'unset', marginRight: '5px' } }}
+                        styles={{ root: { backgroundColor: isUnderlineActive ? theme.palette.neutralQuaternary : 'unset', marginRight: '5px' } }}
                         iconProps={{ iconName: 'Underline' }}
                         onMouseDown={(event) => {
                             event.preventDefault();
@@ -296,7 +296,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                 </ControlSection>
                 <ControlSection>
                     <IconButton
-                        styles={{ root: { backgroundColor: isUnorderedListActive ? theme.palette.neutralLight : 'unset', marginRight: '5px' } }}
+                        styles={{ root: { backgroundColor: isUnorderedListActive ? theme.palette.neutralQuaternary : 'unset', marginRight: '5px' } }}
                         iconProps={{ iconName: 'BulletedList' }}
                         onMouseDown={(event) => {
                             event.preventDefault();
@@ -304,7 +304,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                         }}
                     />
                     <IconButton
-                        styles={{ root: { backgroundColor: isOrderedListActive ? theme.palette.neutralLight : 'unset', marginRight: '5px' } }}
+                        styles={{ root: { backgroundColor: isOrderedListActive ? theme.palette.neutralQuaternary : 'unset', marginRight: '5px' } }}
                         iconProps={{ iconName: 'NumberedList' }}
                         onMouseDown={(event) => {
                             event.preventDefault();
