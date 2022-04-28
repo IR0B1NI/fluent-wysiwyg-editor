@@ -1,7 +1,7 @@
 import React, { FunctionComponent, MutableRefObject, useCallback, useEffect, useRef, useState, KeyboardEvent, FormEvent } from 'react';
 import { Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue } from 'draft-js';
 import styled from 'styled-components';
-import { Dropdown, IconButton, IDropdownOption } from '@fluentui/react';
+import { Dropdown, IconButton, IDropdownOption, useTheme } from '@fluentui/react';
 import 'draft-js/dist/Draft.css';
 import { exportEditorStateToHtmlString, exportEditorStateToMarkdownString, getEditorStateFromHtml, getEditorStateFromMarkdown } from './Parser';
 
@@ -45,6 +45,8 @@ export interface ITextEditor {
  * @returns {FunctionComponent} The WYSIWYG editor component.
  */
 export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
+    /** Access to the theme. */
+    const theme = useTheme();
     /** The maximum allowed indent level for lists. */
     const maxIntend = 4;
 
@@ -56,8 +58,16 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                 ? getEditorStateFromHtml(props.initialContent)
                 : EditorState.createEmpty()
     );
+
     /** The currently selected heading type. */
     const [selectedHeading, setSelectedHeading] = useState<string | number>('paragraph');
+    /** Whether the bold style is currently active or not. */
+    const [isBoldActive, setIsBoldActive] = useState<boolean>(false);
+    /** Whether the italic style is currently active or not. */
+    const [isItalicActive, setIsItalicActive] = useState<boolean>(false);
+    /** Whether the underline style is currently active or not. */
+    const [isUnderlineActive, setIsUnderlineActive] = useState<boolean>(false);
+
     /** Reference to the draft-js editor component. */
     const editorRef = useRef<Editor>();
 
@@ -223,6 +233,12 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
 
     /** Handle changes in block type. */
     useEffect(() => {
+        // Get the current inline style.
+        const currentInlineStyle = editorState.getCurrentInlineStyle();
+        // Activate states of applied styles.
+        setIsBoldActive(currentInlineStyle.has('BOLD'));
+        setIsItalicActive(currentInlineStyle.has('ITALIC'));
+        setIsUnderlineActive(currentInlineStyle.has('UNDERLINE'));
         // Get the selection.
         const currentSelection = editorState.getSelection();
         // Get the anchor key.
@@ -248,6 +264,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                 </ControlSection>
                 <ControlSection>
                     <IconButton
+                        styles={{ root: { backgroundColor: isBoldActive ? theme.palette.neutralLight : 'unset' } }}
                         iconProps={{ iconName: 'Bold' }}
                         onMouseDown={(event) => {
                             event.preventDefault();
@@ -255,6 +272,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                         }}
                     />
                     <IconButton
+                        styles={{ root: { backgroundColor: isItalicActive ? theme.palette.neutralLight : 'unset', margin: '0px 5px' } }}
                         iconProps={{ iconName: 'Italic' }}
                         onMouseDown={(event) => {
                             event.preventDefault();
@@ -262,6 +280,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                         }}
                     />
                     <IconButton
+                        styles={{ root: { backgroundColor: isUnderlineActive ? theme.palette.neutralLight : 'unset' } }}
                         iconProps={{ iconName: 'Underline' }}
                         onMouseDown={(event) => {
                             event.preventDefault();
