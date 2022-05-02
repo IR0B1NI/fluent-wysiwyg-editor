@@ -1,22 +1,26 @@
 import React, { FunctionComponent, MutableRefObject, useCallback, useEffect, useRef, useState, KeyboardEvent, FormEvent } from 'react';
 import { Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue } from 'draft-js';
 import styled from 'styled-components';
-import { Dropdown, IconButton, IDropdownOption, useTheme } from '@fluentui/react';
+import { Dropdown, IconButton, IDropdownOption, IPalette, useTheme } from '@fluentui/react';
 import 'draft-js/dist/Draft.css';
 import { exportEditorStateToHtmlString, exportEditorStateToMarkdownString, getEditorStateFromHtml, getEditorStateFromMarkdown } from './Parser';
 
-const EditorContainer = styled.div`
-    border: 1px solid black;
+interface IThemed {
+    palette: IPalette;
+}
+
+const EditorContainer = styled.div<IThemed>`
+    border: 1px solid ${(props) => props.palette.black};
     display: flex;
     flex: 1;
     flex-direction: column;
 `;
 
-const ToolbarContainer = styled.div`
+const ToolbarContainer = styled.div<IThemed>`
     display: flex;
     margin: 5px;
     padding: 5px 0;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid ${(props) => props.palette.black};
     align-items: center;
 `;
 
@@ -263,8 +267,8 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     }, [applyBlockStyle, editorState]);
 
     return (
-        <EditorContainer>
-            <ToolbarContainer>
+        <EditorContainer palette={theme.palette}>
+            <ToolbarContainer palette={theme.palette}>
                 <ControlSection>
                     <Dropdown styles={{ root: { minWidth: 150, maxWidth: 150 } }} options={headingOptions} selectedKey={selectedHeading} onChange={onHeadingChange} />
                 </ControlSection>

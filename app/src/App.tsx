@@ -77,7 +77,7 @@ const App = () => {
                 <HeaderContainer>
                     <IconButton
                         styles={{ root: { marginLeft: 'auto' } }}
-                        iconProps={{ iconName: isDarkModeEnabled ? 'ClearNight' : 'Sunny' }}
+                        iconProps={{ iconName: isDarkModeEnabled ? 'ClearNight' : 'Sunny', styles: { root:  { color: theme.palette?.black } } }}
                         onClick={() => setIsDarkModeEnabled(!isDarkModeEnabled)}
                     />
                 </HeaderContainer>
