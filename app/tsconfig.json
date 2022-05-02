@@ -18,18 +18,15 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
-    "removeComments": false,
-    "incremental": true
+    "removeComments": false
   },
   "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
+    "src"
   ],
   "exclude": [
-    "node_modules"
+    "src/service-worker.ts"
   ]
 }
