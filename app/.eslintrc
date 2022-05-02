@@ -17,9 +17,7 @@
         "react/jsx-indent-props": ["error", 4],
         "react/jsx-props-no-spreading": "off",
         "react/prop-types": "off",
-        "react/state-in-constructor": ["error", "never"],
-        "jsx-a11y/anchor-is-valid": 0,
-        "react/jsx-key": 0
+        "react/state-in-constructor": ["error", "never"]
     },
     "settings": {
         "import/resolver": "webpack",
