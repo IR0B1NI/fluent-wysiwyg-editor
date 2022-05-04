@@ -1,7 +1,7 @@
 {
     "name": "fluent-wysiwyg-editor",
     "version": "0.1.0",
-    "homepage": "https://ir0b1ni.github.io/fluent-wysiwyg-editor",
+    "homepage": "https://editor.robin-thoene.com",
     "private": false,
     "license": "MIT",
     "dependencies": {
