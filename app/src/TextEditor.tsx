@@ -1,9 +1,10 @@
-import React, { FunctionComponent, MutableRefObject, useCallback, useEffect, useRef, useState, KeyboardEvent, FormEvent } from 'react';
-import { Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue } from 'draft-js';
-import styled from 'styled-components';
-import { Dropdown, IconButton, IDropdownOption, IPalette, useTheme } from '@fluentui/react';
 import 'draft-js/dist/Draft.css';
-import { exportEditorStateToHtmlString, exportEditorStateToMarkdownString, getEditorStateFromHtml, getEditorStateFromMarkdown } from './Parser';
+
+import React, { FunctionComponent, MutableRefObject, useCallback, useEffect, useRef, useState, KeyboardEvent, FormEvent } from 'react';
+import { Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue, Modifier } from 'draft-js';
+import styled from 'styled-components';
+import { DefaultButton, Dialog, DialogFooter, Dropdown, IconButton, IDropdownOption, IPalette, PrimaryButton, TextField, useTheme } from '@fluentui/react';
+import { createEditorStateFromContent, exportEditorStateToHtmlString, exportEditorStateToMarkdownString, getEditorStateFromHtml, getEditorStateFromMarkdown } from './Parser';
 
 interface IThemed {
     palette: IPalette;
@@ -59,8 +60,8 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
         props.initialContent && props.contentType === 'markdown'
             ? getEditorStateFromMarkdown(props.initialContent)
             : props.initialContent && props.contentType === 'html'
-                ? getEditorStateFromHtml(props.initialContent)
-                : EditorState.createEmpty()
+            ? getEditorStateFromHtml(props.initialContent)
+            : EditorState.createEmpty()
     );
 
     /** The currently selected heading type. */
@@ -76,8 +77,40 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     /** Whether the unordered list style is currently active or not. */
     const [isUnorderedListActive, setIsUnorderedListActive] = useState<boolean>(false);
 
+    const [urlValue, setUrlValue] = useState('');
+    const [isUrlInputVisible, setIsUrlInputVisible] = useState(false);
+
     /** Reference to the draft-js editor component. */
     const editorRef = useRef<Editor>();
+
+    /**
+     * Add a link to the current selection.
+     */
+    const addLink = () => {
+        const contentState = editorState.getCurrentContent();
+        const contentStateWithEntity = contentState.createEntity('LINK', 'MUTABLE', { url: urlValue, target: '_blank' });
+        const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+        const selection = editorState.getSelection();
+        let newState = RichUtils.toggleLink(editorState, selection, entityKey);
+        if (!newState) {
+            return;
+        }
+        newState = createEditorStateFromContent(newState.getCurrentContent());
+        setEditorState(newState);
+        setIsUrlInputVisible(false);
+        setUrlValue('');
+        setTimeout(() => editorRef.current?.focus(), 0);
+    };
+
+    /**
+     * Remove all links in the current selection.
+     */
+    const removeLink = () => {
+        const selection = editorState.getSelection();
+        if (!selection.isCollapsed()) {
+            setEditorState(RichUtils.toggleLink(editorState, selection, null));
+        }
+    };
 
     /** Options for the heading dropdown */
     const headingOptions: IDropdownOption[] = [
@@ -268,6 +301,30 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
 
     return (
         <EditorContainer palette={theme.palette}>
+            {/* @ts-expect-error: Ignore no children prop error. */}
+            <Dialog isOpen={isUrlInputVisible}>
+                <TextField
+                    hidden={!isUrlInputVisible}
+                    value={urlValue}
+                    onChange={(_: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => {
+                        if (newValue || newValue === '') {
+                            setUrlValue(newValue);
+                        }
+                    }}
+                />
+                {/* @ts-expect-error: Ignore no children prop error. */}
+                <DialogFooter>
+                    <PrimaryButton
+                        text="Add Link"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            addLink();
+                            setIsUrlInputVisible(false);
+                        }}
+                    />
+                    <DefaultButton text="Abort" onClick={() => setIsUrlInputVisible(false)} />
+                </DialogFooter>
+            </Dialog>
             <ToolbarContainer palette={theme.palette}>
                 <ControlSection>
                     <Dropdown styles={{ root: { minWidth: 150, maxWidth: 150 } }} options={headingOptions} selectedKey={selectedHeading} onChange={onHeadingChange} />
@@ -333,6 +390,24 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             const e: any = { preventDefault: () => null };
                             setEditorState(RichUtils.onTab(e, editorState, maxIntend));
+                        }}
+                    />
+                </ControlSection>
+                <ControlSection>
+                    <IconButton
+                        styles={{ root: { marginRight: '5px', color: theme.palette.black } }}
+                        iconProps={{ iconName: 'AddLink' }}
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                            setIsUrlInputVisible(true);
+                        }}
+                    />
+                    <IconButton
+                        styles={{ root: { marginRight: '5px', color: theme.palette.black } }}
+                        iconProps={{ iconName: 'RemoveLink' }}
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                            removeLink();
                         }}
                     />
                 </ControlSection>
