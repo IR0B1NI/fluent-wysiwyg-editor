@@ -1,7 +1,7 @@
 import 'draft-js/dist/Draft.css';
 
 import React, { FunctionComponent, MutableRefObject, useCallback, useEffect, useRef, useState, KeyboardEvent, FormEvent } from 'react';
-import { Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue, Modifier } from 'draft-js';
+import { Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue } from 'draft-js';
 import styled from 'styled-components';
 import { DefaultButton, Dialog, DialogFooter, Dropdown, IconButton, IDropdownOption, IPalette, PrimaryButton, TextField, useTheme } from '@fluentui/react';
 import { createEditorStateFromContent, exportEditorStateToHtmlString, exportEditorStateToMarkdownString, getEditorStateFromHtml, getEditorStateFromMarkdown } from './Parser';
@@ -60,8 +60,8 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
         props.initialContent && props.contentType === 'markdown'
             ? getEditorStateFromMarkdown(props.initialContent)
             : props.initialContent && props.contentType === 'html'
-            ? getEditorStateFromHtml(props.initialContent)
-            : EditorState.createEmpty()
+                ? getEditorStateFromHtml(props.initialContent)
+                : EditorState.createEmpty()
     );
 
     /** The currently selected heading type. */
@@ -76,9 +76,10 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     const [isOrderedListActive, setIsOrderedListActive] = useState<boolean>(false);
     /** Whether the unordered list style is currently active or not. */
     const [isUnorderedListActive, setIsUnorderedListActive] = useState<boolean>(false);
-
-    const [urlValue, setUrlValue] = useState('');
-    const [isUrlInputVisible, setIsUrlInputVisible] = useState(false);
+    /** The current value of the url input. */
+    const [urlValue, setUrlValue] = useState<string>('');
+    /** Whether the url input is visible or not. */
+    const [isUrlInputVisible, setIsUrlInputVisible] = useState<boolean>(false);
 
     /** Reference to the draft-js editor component. */
     const editorRef = useRef<Editor>();
