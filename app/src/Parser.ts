@@ -29,6 +29,13 @@ const markdownToDraftOptions: MarkdownToDraftOptions = {
     },
 };
 
+/**
+ * Find all entities in the editor that are links.
+ *
+ * @param {ContentBlock} block The targeted block.
+ * @param {() => void} callback The callback to execute.
+ * @param {ContentState} contentState The current content state.
+ */
 const findLinkEntities = (block: ContentBlock, callback: (start: number, end: number) => void, contentState: ContentState) => {
     block.findEntityRanges((character) => {
         const entityKey = character.getEntity();
@@ -36,7 +43,8 @@ const findLinkEntities = (block: ContentBlock, callback: (start: number, end: nu
     }, callback);
 };
 
-export const decorator = new CompositeDecorator([
+/** Custom decorator for creating a draft js editor state. */
+const decorator = new CompositeDecorator([
     {
         strategy: findLinkEntities,
         component: DraftLink,
@@ -83,7 +91,7 @@ export const getEditorStateFromHtml = (htmlString: string): EditorState => {
 };
 
 /**
- * Convert a given draft-js editor state inta a markdown string.
+ * Convert a given draft-js editor state into a markdown string.
  *
  * @param {EditorState} editorState The draft-js WYSIWYG editor state.
  * @returns {string} The html string representation of the current draft-js WYSIWYG editor state.
@@ -92,4 +100,14 @@ export const exportEditorStateToHtmlString = (editorState: EditorState): string 
     const draftContent = editorState.getCurrentContent();
     const html = stateToHTML(draftContent);
     return html;
+};
+
+/**
+ * Create and return a new editor state based on given content state.
+ *
+ * @param {ContentState} contentState The content state to use.
+ * @returns {EditorState} The created editor state.
+ */
+export const createEditorStateFromContent = (contentState: ContentState): EditorState => {
+    return EditorState.createWithContent(contentState, decorator);
 };
