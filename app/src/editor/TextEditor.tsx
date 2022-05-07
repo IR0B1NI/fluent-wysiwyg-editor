@@ -25,15 +25,19 @@ const ToolbarContainer = styled.div<IThemed>`
     padding: 5px 0;
     border-bottom: 1px solid ${(props) => props.palette.black};
     align-items: center;
+    flex-wrap: wrap;
 `;
 
 const ControlSection = styled.div`
     margin-right: 25px;
+    display: flex;
+    min-width: max-content;
 `;
 
 const EditorTextfieldWrapper = styled.div`
     padding: 15px;
     flex: 1;
+    overflow: auto;
 `;
 
 export interface ITextEditor {

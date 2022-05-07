@@ -11,7 +11,8 @@ const AppContainer = styled.div`
     max-width: 100vw;
     max-height: 100vh;
     min-height: 100vh;
-    min-width: 100vw;
+    min-width: 1000px;
+    overflow: hidden;
 `;
 
 const HeaderContainer = styled.div`
@@ -24,19 +25,26 @@ const HeaderContainer = styled.div`
 const ContentContainer = styled.div`
     display: flex;
     flex: 1;
-    flex-direction: column;
-    padding: 25px;
+    overflow: hidden;
 `;
 
 const SingleContentWrapper = styled.div`
     display: flex;
     flex: 1;
+    overflow: hidden;
 `;
 
 const AppHeadlineContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+`;
+
+const ContentSectionContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 25px;
 `;
 
 interface IMarkdownPreview {
@@ -126,7 +134,7 @@ const App = () => {
                 </HeaderContainer>
                 <ContentContainer>
                     {stringContent !== undefined && stringContent !== null && (
-                        <>
+                        <ContentSectionContainer>
                             <AppHeadlineContainer>
                                 <Dropdown
                                     styles={{ root: { minWidth: 120, marginRight: 25 } }}
@@ -150,17 +158,17 @@ const App = () => {
                                     handleContentUpdate={(newContent: string) => setStringContent(newContent)}
                                 />
                             </SingleContentWrapper>
-                        </>
+                        </ContentSectionContainer>
                     )}
                     {stringContent !== undefined && stringContent !== null && (
-                        <>
+                        <ContentSectionContainer>
                             <AppHeadlineContainer>
                                 <h2>Generated {selectedContentType === 'markdown' ? 'Markdown' : 'HTML'}</h2>
                             </AppHeadlineContainer>
                             <SingleContentWrapper>
                                 <MarkdownPreview color={theme.palette?.black ?? 'unset'} backgroundColor={theme.palette?.white ?? 'unset'} value={stringContent} readOnly />
                             </SingleContentWrapper>
-                        </>
+                        </ContentSectionContainer>
                     )}
                 </ContentContainer>
             </AppContainer>
