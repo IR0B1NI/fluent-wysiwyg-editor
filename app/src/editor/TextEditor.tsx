@@ -1,9 +1,11 @@
+import 'draft-js/dist/Draft.css';
+
 import React, { FunctionComponent, MutableRefObject, useCallback, useEffect, useRef, useState, KeyboardEvent, FormEvent } from 'react';
 import { Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue } from 'draft-js';
 import styled from 'styled-components';
-import { Dropdown, IconButton, IDropdownOption, IPalette, useTheme } from '@fluentui/react';
-import 'draft-js/dist/Draft.css';
+import { DefaultButton, Dialog, DialogFooter, Dropdown, IconButton, IDropdownOption, IPalette, PrimaryButton, TextField, useTheme } from '@fluentui/react';
 import { exportEditorStateToHtmlString, exportEditorStateToMarkdownString, getEditorStateFromHtml, getEditorStateFromMarkdown } from './Parser';
+import { addLink, applyBlockStyle, applyInlineStyle, removeLink } from './Helper';
 
 interface IThemed {
     palette: IPalette;
@@ -75,6 +77,10 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     const [isOrderedListActive, setIsOrderedListActive] = useState<boolean>(false);
     /** Whether the unordered list style is currently active or not. */
     const [isUnorderedListActive, setIsUnorderedListActive] = useState<boolean>(false);
+    /** The current value of the url input. */
+    const [urlValue, setUrlValue] = useState<string>('');
+    /** Whether the url input is visible or not. */
+    const [isUrlInputVisible, setIsUrlInputVisible] = useState<boolean>(false);
 
     /** Reference to the draft-js editor component. */
     const editorRef = useRef<Editor>();
@@ -87,6 +93,13 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
         { key: 'header-three', text: 'Headline 3' },
     ];
 
+    /**
+     * Set the user input focus into the text editor.
+     */
+    const setFocusIntoEditor = () => {
+        setTimeout(() => editorRef.current?.focus(), 0);
+    };
+
     /** Handle editor state updates by calling the property callback. */
     useEffect(() => {
         let newContent = '';
@@ -97,43 +110,6 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
         }
         props.handleContentUpdate(newContent);
     }, [editorState, props]);
-
-    /**
-     * General function to apply an inline style to the current draft-js editor state.
-     *
-     * @param {string} inlineStyle The style name to apply.
-     */
-    const applyInlineStyle = useCallback(
-        (inlineStyle: string) => {
-            const selection = editorState.getSelection();
-            if (!selection.isCollapsed()) {
-                setEditorState(RichUtils.toggleInlineStyle(editorState, inlineStyle));
-            } else {
-                const newState = RichUtils.toggleInlineStyle(editorState, inlineStyle);
-                if (newState) {
-                    setEditorState(newState);
-                }
-            }
-            // Move the users focus back into the editor input field.
-            setTimeout(() => editorRef.current?.focus(), 0);
-        },
-        [editorState]
-    );
-
-    /**
-     * General function to apply a block style to the current draft-js editor state.
-     *
-     * @param {string} blockStyle The style to apply to the current editor block
-     */
-    const applyBlockStyle = useCallback(
-        (blockStyle: string) => {
-            // Toggle the block style.
-            setEditorState(RichUtils.toggleBlockType(editorState, blockStyle));
-            // Move the users focus back into the editor input field.
-            setTimeout(() => editorRef.current?.focus(), 0);
-        },
-        [editorState]
-    );
 
     /**
      * Handle keyboard shortcuts in the draft-js editor.
@@ -186,23 +162,26 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     /**
      * Mouse down handler to apply BOLD style.
      */
-    const onBoldMouseDown = useCallback(() => {
-        applyInlineStyle('BOLD');
-    }, [applyInlineStyle]);
+    const onBoldMouseDown = () => {
+        applyInlineStyle(editorState, setEditorState, 'BOLD');
+        setFocusIntoEditor();
+    };
 
     /**
      * Mouse down handler to apply ITALIC style.
      */
-    const onItalicMouseDown = useCallback(() => {
-        applyInlineStyle('ITALIC');
-    }, [applyInlineStyle]);
+    const onItalicMouseDown = () => {
+        applyInlineStyle(editorState, setEditorState, 'ITALIC');
+        setFocusIntoEditor();
+    };
 
     /**
      * Mouse down handler to apply UNDERLINE style.
      */
-    const onUnderlineMouseDown = useCallback(() => {
-        applyInlineStyle('UNDERLINE');
-    }, [applyInlineStyle]);
+    const onUnderlineMouseDown = () => {
+        applyInlineStyle(editorState, setEditorState, 'UNDERLINE');
+        setFocusIntoEditor();
+    };
 
     /**
      * On change handler for the heading dropdown.
@@ -211,33 +190,34 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
      * @param {React.FormEvent<HTMLDivElement>} _ The occurred form event.
      * @param {IDropdownOption | undefined} option The selected dropdown option.
      */
-    const onHeadingChange = useCallback(
-        (_: FormEvent<HTMLDivElement>, option?: IDropdownOption | undefined) => {
-            if (!option) {
-                return;
-            }
-            let keyToSet = option.key;
-            switch (option.key) {
-                case 'paragraph':
-                    applyBlockStyle('paragraph');
-                    break;
-                case 'header-one':
-                    applyBlockStyle('header-one');
-                    break;
-                case 'header-two':
-                    applyBlockStyle('header-two');
-                    break;
-                case 'header-three':
-                    applyBlockStyle('header-three');
-                    break;
-                default:
-                    keyToSet = 'paragraph';
-                    break;
-            }
-            setSelectedHeading(keyToSet);
-        },
-        [applyBlockStyle]
-    );
+    const onHeadingChange = (_: FormEvent<HTMLDivElement>, option?: IDropdownOption | undefined) => {
+        if (!option) {
+            return;
+        }
+        let keyToSet = option.key;
+        switch (option.key) {
+            case 'paragraph':
+                applyBlockStyle(editorState, setEditorState, 'paragraph');
+                setFocusIntoEditor();
+                break;
+            case 'header-one':
+                applyBlockStyle(editorState, setEditorState, 'header-one');
+                setFocusIntoEditor();
+                break;
+            case 'header-two':
+                applyBlockStyle(editorState, setEditorState, 'header-two');
+                setFocusIntoEditor();
+                break;
+            case 'header-three':
+                applyBlockStyle(editorState, setEditorState, 'header-three');
+                setFocusIntoEditor();
+                break;
+            default:
+                keyToSet = 'paragraph';
+                break;
+        }
+        setSelectedHeading(keyToSet);
+    };
 
     /** Handle changes in block type. */
     useEffect(() => {
@@ -264,10 +244,44 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
         }
         // Update the block type dropdown.
         setSelectedHeading(currentBlockType);
-    }, [applyBlockStyle, editorState]);
+    }, [editorState]);
 
     return (
         <EditorContainer palette={theme.palette}>
+            {/* @ts-expect-error: Ignore no children prop error. */}
+            <Dialog hidden={!isUrlInputVisible} title="Insert Link">
+                <TextField
+                    hidden={!isUrlInputVisible}
+                    value={urlValue}
+                    onKeyDown={(event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                        if (event.key === 'Enter') {
+                            addLink(editorState, setEditorState, urlValue);
+                            setIsUrlInputVisible(false);
+                            setUrlValue('');
+                            setFocusIntoEditor();
+                        }
+                    }}
+                    onChange={(_: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => {
+                        if (newValue || newValue === '') {
+                            setUrlValue(newValue);
+                        }
+                    }}
+                />
+                {/* @ts-expect-error: Ignore no children prop error. */}
+                <DialogFooter>
+                    <PrimaryButton
+                        text="Add Link"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            addLink(editorState, setEditorState, urlValue);
+                            setIsUrlInputVisible(false);
+                            setUrlValue('');
+                            setFocusIntoEditor();
+                        }}
+                    />
+                    <DefaultButton text="Abort" onClick={() => setIsUrlInputVisible(false)} />
+                </DialogFooter>
+            </Dialog>
             <ToolbarContainer palette={theme.palette}>
                 <ControlSection>
                     <Dropdown styles={{ root: { minWidth: 150, maxWidth: 150 } }} options={headingOptions} selectedKey={selectedHeading} onChange={onHeadingChange} />
@@ -304,7 +318,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                         iconProps={{ iconName: 'BulletedList' }}
                         onMouseDown={(event) => {
                             event.preventDefault();
-                            applyBlockStyle('unordered-list-item');
+                            applyBlockStyle(editorState, setEditorState, 'unordered-list-item');
                         }}
                     />
                     <IconButton
@@ -312,7 +326,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                         iconProps={{ iconName: 'NumberedList' }}
                         onMouseDown={(event) => {
                             event.preventDefault();
-                            applyBlockStyle('ordered-list-item');
+                            applyBlockStyle(editorState, setEditorState, 'ordered-list-item');
                         }}
                     />
                     <IconButton
@@ -336,8 +350,26 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                         }}
                     />
                 </ControlSection>
+                <ControlSection>
+                    <IconButton
+                        styles={{ root: { marginRight: '5px', color: theme.palette.black } }}
+                        iconProps={{ iconName: 'AddLink' }}
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                            setIsUrlInputVisible(true);
+                        }}
+                    />
+                    <IconButton
+                        styles={{ root: { marginRight: '5px', color: theme.palette.black } }}
+                        iconProps={{ iconName: 'RemoveLink' }}
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                            removeLink(editorState, setEditorState);
+                        }}
+                    />
+                </ControlSection>
             </ToolbarContainer>
-            <EditorTextfieldWrapper onClick={() => editorRef.current?.focus()}>
+            <EditorTextfieldWrapper onClick={setFocusIntoEditor}>
                 <Editor
                     handleReturn={handleReturn}
                     ref={editorRef as MutableRefObject<Editor>}

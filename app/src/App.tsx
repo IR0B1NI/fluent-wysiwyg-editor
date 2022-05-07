@@ -1,7 +1,7 @@
 import { Dropdown, IconButton, IDropdownOption, PartialTheme, ThemeProvider } from '@fluentui/react';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { TextEditor } from './TextEditor';
+import { TextEditor } from './editor/TextEditor';
 import { DarkPalette, DefaultComponentStyles, DefaultFontStyle, Fonts, Palette } from './Theme';
 
 const AppContainer = styled.div`
