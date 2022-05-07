@@ -25,15 +25,19 @@ const ToolbarContainer = styled.div<IThemed>`
     padding: 5px 0;
     border-bottom: 1px solid ${(props) => props.palette.black};
     align-items: center;
+    flex-wrap: wrap;
 `;
 
 const ControlSection = styled.div`
     margin-right: 25px;
+    display: flex;
+    min-width: max-content;
 `;
 
 const EditorTextfieldWrapper = styled.div`
     padding: 15px;
     flex: 1;
+    overflow: auto;
 `;
 
 export interface ITextEditor {
@@ -58,7 +62,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     const maxIntend = 4;
 
     /** React state of the current draft-js editor state. */
-    const [editorState, setEditorState] = React.useState(
+    const [editorState, setEditorState] = useState(
         props.initialContent && props.contentType === 'markdown'
             ? getEditorStateFromMarkdown(props.initialContent)
             : props.initialContent && props.contentType === 'html'
@@ -199,7 +203,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
      * On change handler for the heading dropdown.
      * Applies the selected heading type to the current editor block.
      *
-     * @param {React.FormEvent<HTMLDivElement>} _ The occurred form event.
+     * @param {FormEvent<HTMLDivElement>} _ The occurred form event.
      * @param {IDropdownOption | undefined} option The selected dropdown option.
      */
     const onHeadingChange = (_: FormEvent<HTMLDivElement>, option?: IDropdownOption | undefined) => {
@@ -265,7 +269,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                 <TextField
                     hidden={!isUrlInputVisible}
                     value={urlValue}
-                    onKeyDown={(event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                    onKeyDown={(event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                         if (event.key === 'Enter') {
                             addLink(editorState, setEditorState, urlValue);
                             setIsUrlInputVisible(false);
