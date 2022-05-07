@@ -61,8 +61,8 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
         props.initialContent && props.contentType === 'markdown'
             ? getEditorStateFromMarkdown(props.initialContent)
             : props.initialContent && props.contentType === 'html'
-                ? getEditorStateFromHtml(props.initialContent)
-                : EditorState.createEmpty()
+            ? getEditorStateFromHtml(props.initialContent)
+            : EditorState.createEmpty()
     );
 
     /** The currently selected heading type. */
@@ -253,6 +253,14 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                 <TextField
                     hidden={!isUrlInputVisible}
                     value={urlValue}
+                    onKeyDown={(event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                        if (event.key === 'Enter') {
+                            addLink(editorState, setEditorState, urlValue);
+                            setIsUrlInputVisible(false);
+                            setUrlValue('');
+                            setFocusIntoEditor();
+                        }
+                    }}
                     onChange={(_: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => {
                         if (newValue || newValue === '') {
                             setUrlValue(newValue);
