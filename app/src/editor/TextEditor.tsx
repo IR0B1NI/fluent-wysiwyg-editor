@@ -249,7 +249,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     return (
         <EditorContainer palette={theme.palette}>
             {/* @ts-expect-error: Ignore no children prop error. */}
-            <Dialog isOpen={isUrlInputVisible} title="Insert Link">
+            <Dialog hidden={!isUrlInputVisible} title="Insert Link">
                 <TextField
                     hidden={!isUrlInputVisible}
                     value={urlValue}
