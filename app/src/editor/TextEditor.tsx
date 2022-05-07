@@ -62,8 +62,8 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
         props.initialContent && props.contentType === 'markdown'
             ? getEditorStateFromMarkdown(props.initialContent)
             : props.initialContent && props.contentType === 'html'
-            ? getEditorStateFromHtml(props.initialContent)
-            : EditorState.createEmpty()
+                ? getEditorStateFromHtml(props.initialContent)
+                : EditorState.createEmpty()
     );
 
     /** The currently selected heading type. */
@@ -89,6 +89,10 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     const italicTooltipId = useId();
     /** The unique identifier of the tooltip element for the underline styling button. */
     const underlineTooltipId = useId();
+    /** The unique identifier of the tooltip element for the undo button. */
+    const undoTooltipId = useId();
+    /** The unique identifier of the tooltip element for the redo button. */
+    const redoTooltipId = useId();
 
     /** Reference to the draft-js editor component. */
     const editorRef = useRef<Editor>();
@@ -406,6 +410,44 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                             removeLink(editorState, setEditorState);
                         }}
                     />
+                </ControlSection>
+                <ControlSection>
+                    <TooltipHost
+                        id={undoTooltipId}
+                        content={
+                            <>
+                                <div>Ctrl + Z</div>
+                                <div>CMD + Z</div>
+                            </>
+                        }
+                    >
+                        <IconButton
+                            styles={{ root: { marginRight: '5px', color: theme.palette.black } }}
+                            iconProps={{ iconName: 'Undo' }}
+                            onMouseDown={(event) => {
+                                event.preventDefault();
+                                setEditorState(EditorState.undo(editorState));
+                            }}
+                        />
+                    </TooltipHost>
+                    <TooltipHost
+                        id={redoTooltipId}
+                        content={
+                            <>
+                                <div>Ctrl + Y</div>
+                                <div>CMD + Shift + Z</div>
+                            </>
+                        }
+                    >
+                        <IconButton
+                            styles={{ root: { marginRight: '5px', color: theme.palette.black } }}
+                            iconProps={{ iconName: 'Redo' }}
+                            onMouseDown={(event) => {
+                                event.preventDefault();
+                                setEditorState(EditorState.redo(editorState));
+                            }}
+                        />
+                    </TooltipHost>
                 </ControlSection>
             </ToolbarContainer>
             <EditorTextfieldWrapper onClick={setFocusIntoEditor}>
