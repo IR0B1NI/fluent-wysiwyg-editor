@@ -3,9 +3,10 @@ import 'draft-js/dist/Draft.css';
 import React, { FunctionComponent, MutableRefObject, useCallback, useEffect, useRef, useState, KeyboardEvent, FormEvent } from 'react';
 import { Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue } from 'draft-js';
 import styled from 'styled-components';
-import { DefaultButton, Dialog, DialogFooter, Dropdown, IconButton, IDropdownOption, IPalette, PrimaryButton, TextField, useTheme } from '@fluentui/react';
+import { DefaultButton, Dialog, DialogFooter, Dropdown, IconButton, IDropdownOption, IPalette, PrimaryButton, TextField, TooltipHost, useTheme } from '@fluentui/react';
 import { exportEditorStateToHtmlString, exportEditorStateToMarkdownString, getEditorStateFromHtml, getEditorStateFromMarkdown } from './Parser';
 import { addLink, applyBlockStyle, applyInlineStyle, removeLink } from './Helper';
+import { useId } from '@fluentui/react-hooks';
 
 interface IThemed {
     palette: IPalette;
@@ -81,6 +82,17 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     const [urlValue, setUrlValue] = useState<string>('');
     /** Whether the url input is visible or not. */
     const [isUrlInputVisible, setIsUrlInputVisible] = useState<boolean>(false);
+
+    /** The unique identifier of the tooltip element for the bold styling button. */
+    const boldTooltipId = useId();
+    /** The unique identifier of the tooltip element for the italic styling button. */
+    const italicTooltipId = useId();
+    /** The unique identifier of the tooltip element for the underline styling button. */
+    const underlineTooltipId = useId();
+    /** The unique identifier of the tooltip element for the undo button. */
+    const undoTooltipId = useId();
+    /** The unique identifier of the tooltip element for the redo button. */
+    const redoTooltipId = useId();
 
     /** Reference to the draft-js editor component. */
     const editorRef = useRef<Editor>();
@@ -287,30 +299,61 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                     <Dropdown styles={{ root: { minWidth: 150, maxWidth: 150 } }} options={headingOptions} selectedKey={selectedHeading} onChange={onHeadingChange} />
                 </ControlSection>
                 <ControlSection>
-                    <IconButton
-                        styles={{ root: { backgroundColor: isBoldActive ? theme.palette.neutralQuaternary : 'unset', marginRight: '5px', color: theme.palette.black } }}
-                        iconProps={{ iconName: 'Bold' }}
-                        onMouseDown={(event) => {
-                            event.preventDefault();
-                            onBoldMouseDown();
-                        }}
-                    />
-                    <IconButton
-                        styles={{ root: { backgroundColor: isItalicActive ? theme.palette.neutralQuaternary : 'unset', marginRight: '5px', color: theme.palette.black } }}
-                        iconProps={{ iconName: 'Italic' }}
-                        onMouseDown={(event) => {
-                            event.preventDefault();
-                            onItalicMouseDown();
-                        }}
-                    />
-                    <IconButton
-                        styles={{ root: { backgroundColor: isUnderlineActive ? theme.palette.neutralQuaternary : 'unset', marginRight: '5px', color: theme.palette.black } }}
-                        iconProps={{ iconName: 'Underline' }}
-                        onMouseDown={(event) => {
-                            event.preventDefault();
-                            onUnderlineMouseDown();
-                        }}
-                    />
+                    <TooltipHost
+                        id={boldTooltipId}
+                        content={
+                            <>
+                                <div>Ctrl + B</div>
+                                <div>CMD + B</div>
+                            </>
+                        }
+                    >
+                        <IconButton
+                            aria-describedby={boldTooltipId}
+                            styles={{ root: { backgroundColor: isBoldActive ? theme.palette.neutralQuaternary : 'unset', marginRight: '5px', color: theme.palette.black } }}
+                            iconProps={{ iconName: 'Bold' }}
+                            onMouseDown={(event) => {
+                                event.preventDefault();
+                                onBoldMouseDown();
+                            }}
+                        />
+                    </TooltipHost>
+                    <TooltipHost
+                        id={italicTooltipId}
+                        content={
+                            <>
+                                <div>Ctrl + I</div>
+                                <div>CMD + I</div>
+                            </>
+                        }
+                    >
+                        <IconButton
+                            styles={{ root: { backgroundColor: isItalicActive ? theme.palette.neutralQuaternary : 'unset', marginRight: '5px', color: theme.palette.black } }}
+                            iconProps={{ iconName: 'Italic' }}
+                            onMouseDown={(event) => {
+                                event.preventDefault();
+                                onItalicMouseDown();
+                            }}
+                        />
+                    </TooltipHost>
+                    <TooltipHost
+                        id={underlineTooltipId}
+                        content={
+                            <>
+                                <div>Ctrl + U</div>
+                                <div>CMD + U</div>
+                            </>
+                        }
+                    >
+                        <IconButton
+                            styles={{ root: { backgroundColor: isUnderlineActive ? theme.palette.neutralQuaternary : 'unset', marginRight: '5px', color: theme.palette.black } }}
+                            iconProps={{ iconName: 'Underline' }}
+                            onMouseDown={(event) => {
+                                event.preventDefault();
+                                onUnderlineMouseDown();
+                            }}
+                        />
+                    </TooltipHost>
                 </ControlSection>
                 <ControlSection>
                     <IconButton
@@ -367,6 +410,44 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                             removeLink(editorState, setEditorState);
                         }}
                     />
+                </ControlSection>
+                <ControlSection>
+                    <TooltipHost
+                        id={undoTooltipId}
+                        content={
+                            <>
+                                <div>Ctrl + Z</div>
+                                <div>CMD + Z</div>
+                            </>
+                        }
+                    >
+                        <IconButton
+                            styles={{ root: { marginRight: '5px', color: theme.palette.black } }}
+                            iconProps={{ iconName: 'Undo' }}
+                            onMouseDown={(event) => {
+                                event.preventDefault();
+                                setEditorState(EditorState.undo(editorState));
+                            }}
+                        />
+                    </TooltipHost>
+                    <TooltipHost
+                        id={redoTooltipId}
+                        content={
+                            <>
+                                <div>Ctrl + Y</div>
+                                <div>CMD + Shift + Z</div>
+                            </>
+                        }
+                    >
+                        <IconButton
+                            styles={{ root: { marginRight: '5px', color: theme.palette.black } }}
+                            iconProps={{ iconName: 'Redo' }}
+                            onMouseDown={(event) => {
+                                event.preventDefault();
+                                setEditorState(EditorState.redo(editorState));
+                            }}
+                        />
+                    </TooltipHost>
                 </ControlSection>
             </ToolbarContainer>
             <EditorTextfieldWrapper onClick={setFocusIntoEditor}>

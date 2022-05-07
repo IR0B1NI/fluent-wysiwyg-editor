@@ -1,5 +1,6 @@
-import { Dropdown, IconButton, IDropdownOption, PartialTheme, ThemeProvider } from '@fluentui/react';
-import React, { useState } from 'react';
+import { Dropdown, FontIcon, IDropdownOption, PartialTheme, ThemeProvider, Toggle, TooltipHost } from '@fluentui/react';
+import { useId } from '@fluentui/react-hooks';
+import React, { useState, MouseEvent } from 'react';
 import styled from 'styled-components';
 import { TextEditor } from './editor/TextEditor';
 import { DarkPalette, DefaultComponentStyles, DefaultFontStyle, Fonts, Palette } from './Theme';
@@ -15,6 +16,8 @@ const AppContainer = styled.div`
 
 const HeaderContainer = styled.div`
     display: flex;
+    justify-content: flex-end;
+    align-items: center;
     padding: 10px;
 `;
 
@@ -57,6 +60,9 @@ const App = () => {
     /** Whether the dark mode is enabled or not. */
     const [isDarkModeEnabled, setIsDarkModeEnabled] = useState<boolean>(false);
 
+    /** The unique identifier for the dark mode toggle tooltip. */
+    const darkModeToggleTooltipId = useId();
+
     // Build the fluent ui theme.
     const theme: PartialTheme = {
         palette: isDarkModeEnabled ? DarkPalette : Palette,
@@ -75,11 +81,21 @@ const App = () => {
         <ThemeProvider theme={theme}>
             <AppContainer>
                 <HeaderContainer>
-                    <IconButton
-                        styles={{ root: { marginLeft: 'auto' } }}
-                        iconProps={{ iconName: isDarkModeEnabled ? 'ClearNight' : 'Sunny', styles: { root:  { color: theme.palette?.black } } }}
-                        onClick={() => setIsDarkModeEnabled(!isDarkModeEnabled)}
-                    />
+                    <FontIcon iconName={isDarkModeEnabled ? 'ClearNight' : 'Sunny'} />
+                    <TooltipHost id={darkModeToggleTooltipId} content="Activate / Deactivate the dark mode.">
+                        <Toggle
+                            aria-describedby={darkModeToggleTooltipId}
+                            styles={{ root: { marginBottom: 'unset', marginLeft: 10 } }}
+                            checked={isDarkModeEnabled}
+                            onChange={(_: MouseEvent, checked?: boolean | undefined) => {
+                                if (checked) {
+                                    setIsDarkModeEnabled(true);
+                                } else {
+                                    setIsDarkModeEnabled(false);
+                                }
+                            }}
+                        />
+                    </TooltipHost>
                 </HeaderContainer>
                 <ContentContainer>
                     <AppHeadlineContainer>
