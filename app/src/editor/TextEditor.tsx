@@ -61,8 +61,8 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
         props.initialContent && props.contentType === 'markdown'
             ? getEditorStateFromMarkdown(props.initialContent)
             : props.initialContent && props.contentType === 'html'
-            ? getEditorStateFromHtml(props.initialContent)
-            : EditorState.createEmpty()
+                ? getEditorStateFromHtml(props.initialContent)
+                : EditorState.createEmpty()
     );
 
     /** The currently selected heading type. */
