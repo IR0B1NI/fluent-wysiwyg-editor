@@ -1,6 +1,6 @@
 import { Dropdown, FontIcon, IDropdownOption, PartialTheme, ThemeProvider, Toggle, TooltipHost } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
-import React, { useState, MouseEvent } from 'react';
+import React, { useState, MouseEvent, FormEvent } from 'react';
 import styled from 'styled-components';
 import { TextEditor } from './editor/TextEditor';
 import { DarkPalette, DefaultComponentStyles, DefaultFontStyle, Fonts, Palette } from './Theme';
@@ -103,7 +103,7 @@ const App = () => {
                             styles={{ root: { minWidth: 120, marginRight: 25 } }}
                             options={contentTypeDropdownOptions}
                             selectedKey={selectedContentType}
-                            onChange={(_: React.FormEvent<HTMLDivElement>, option?: IDropdownOption | undefined) => {
+                            onChange={(_: FormEvent<HTMLDivElement>, option?: IDropdownOption | undefined) => {
                                 if (!option) {
                                     return;
                                 }
