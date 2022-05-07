@@ -361,7 +361,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                     />
                 </ControlSection>
             </ToolbarContainer>
-            <EditorTextfieldWrapper onClick={() => editorRef.current?.focus()}>
+            <EditorTextfieldWrapper onClick={setFocusIntoEditor}>
                 <Editor
                     handleReturn={handleReturn}
                     ref={editorRef as MutableRefObject<Editor>}
