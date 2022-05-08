@@ -1,6 +1,7 @@
 import { draftToMarkdown, DraftToMarkdownOptions, markdownToDraft, MarkdownToDraftOptions } from 'markdown-draft-js';
-import { EditorState, convertToRaw, convertFromRaw, convertFromHTML, ContentState, ContentBlock, CompositeDecorator } from 'draft-js';
+import { EditorState, convertToRaw, convertFromRaw, ContentState, ContentBlock, CompositeDecorator } from 'draft-js';
 import { stateToHTML } from 'draft-js-export-html';
+import { stateFromHTML } from 'draft-js-import-html';
 import { DraftLink } from './DraftLink';
 
 /** Custom options to convert draft to markdown. */
@@ -84,8 +85,7 @@ export const exportEditorStateToMarkdownString = (editorState: EditorState): str
  * @returns {EditorState} The editor state to use for the base draft-js WYSIWYG editor.
  */
 export const getEditorStateFromHtml = (htmlString: string): EditorState => {
-    const parsed = convertFromHTML(htmlString);
-    const contentState = ContentState.createFromBlockArray(parsed.contentBlocks, parsed.entityMap);
+    const contentState = stateFromHTML(htmlString);
     const editorState = EditorState.createWithContent(contentState, decorator);
     return editorState;
 };
