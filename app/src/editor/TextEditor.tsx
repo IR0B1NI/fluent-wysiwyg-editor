@@ -87,6 +87,8 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     const [isStrikeThroughActive, setIsStrikeThroughActive] = useState<boolean>(false);
     /** Whether the blockquote style is currently active or not. */
     const [isBlockquoteActive, setIsBlockquoteActive] = useState<boolean>(false);
+    /** Whether the code block style is currently active or not. */
+    const [isCodeBlockActive, setIsCodeBlockActive] = useState<boolean>(false);
 
     /** The current value of the url input. */
     const [urlValue, setUrlValue] = useState<string>('');
@@ -284,6 +286,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
         setIsUnorderedListActive(currentBlockType === 'unordered-list-item');
         setIsOrderedListActive(currentBlockType === 'ordered-list-item');
         setIsBlockquoteActive(currentBlockType === 'blockquote');
+        setIsCodeBlockActive(currentBlockType === 'code-block');
         if (currentBlockType === 'unstyled') {
             setSelectedHeading('paragraph');
             return;
@@ -442,6 +445,14 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                         onMouseDown={(event) => {
                             event.preventDefault();
                             applyBlockStyle(editorState, setEditorState, 'blockquote');
+                        }}
+                    />
+                    <IconButton
+                        styles={{ root: { backgroundColor: isCodeBlockActive ? theme.palette.neutralQuaternary : 'unset', marginRight: '5px', color: theme.palette.black } }}
+                        iconProps={{ iconName: 'Code' }}
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                            applyBlockStyle(editorState, setEditorState, 'code-block');
                         }}
                     />
                 </ControlSection>
