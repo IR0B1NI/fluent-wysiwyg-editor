@@ -82,6 +82,9 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     const [isOrderedListActive, setIsOrderedListActive] = useState<boolean>(false);
     /** Whether the unordered list style is currently active or not. */
     const [isUnorderedListActive, setIsUnorderedListActive] = useState<boolean>(false);
+    /** Whether the strike through style is currently active or not. */
+    const [isStrikeThroughActive, setIsStrikeThroughActive] = useState<boolean>(false);
+
     /** The current value of the url input. */
     const [urlValue, setUrlValue] = useState<string>('');
     /** Whether the url input is visible or not. */
@@ -200,6 +203,14 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     };
 
     /**
+     * Mouse down handler to apply UNDERLINE style.
+     */
+    const onStrikeThroughMouseDown = () => {
+        applyInlineStyle(editorState, setEditorState, 'STRIKETHROUGH');
+        setFocusIntoEditor();
+    };
+
+    /**
      * On change handler for the heading dropdown.
      * Applies the selected heading type to the current editor block.
      *
@@ -243,6 +254,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
         setIsBoldActive(currentInlineStyle.has('BOLD'));
         setIsItalicActive(currentInlineStyle.has('ITALIC'));
         setIsUnderlineActive(currentInlineStyle.has('UNDERLINE'));
+        setIsStrikeThroughActive(currentInlineStyle.has('STRIKETHROUGH'));
         // Get the selection.
         const currentSelection = editorState.getSelection();
         // Get the anchor key.
@@ -358,6 +370,14 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                             }}
                         />
                     </TooltipHost>
+                    <IconButton
+                        styles={{ root: { backgroundColor: isStrikeThroughActive ? theme.palette.neutralQuaternary : 'unset', marginRight: '5px', color: theme.palette.black } }}
+                        iconProps={{ iconName: 'Strikethrough' }}
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                            onStrikeThroughMouseDown();
+                        }}
+                    />
                 </ControlSection>
                 <ControlSection>
                     <IconButton
