@@ -32,11 +32,11 @@ export const DraftLink: FunctionComponent<IDraftLinkProps> = (props) => {
      * Callback to execute when the user press the link in editor edit mode.
      */
     const onLinkClick = () => {
-        window?.open(url, '_blank')?.focus();
+        window?.open(url)?.focus();
     };
 
     return (
-        <Link target="_blank" href={url} styles={linkStyles} onClick={onLinkClick}>
+        <Link href={url} styles={linkStyles} onClick={onLinkClick}>
             {linkText || props.children}
         </Link>
     );

@@ -1,12 +1,13 @@
 import 'draft-js/dist/Draft.css';
 
 import React, { FunctionComponent, MutableRefObject, useCallback, useEffect, useRef, useState, KeyboardEvent, FormEvent } from 'react';
-import { Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue } from 'draft-js';
+import { Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue, ContentBlock } from 'draft-js';
 import styled from 'styled-components';
 import { DefaultButton, Dialog, DialogFooter, Dropdown, IconButton, IDropdownOption, IPalette, PrimaryButton, TextField, TooltipHost, useTheme } from '@fluentui/react';
 import { exportEditorStateToHtmlString, exportEditorStateToMarkdownString, getEditorStateFromHtml, getEditorStateFromMarkdown } from './Parser';
 import { addLink, applyBlockStyle, applyInlineStyle, removeLink } from './Helper';
 import { useId } from '@fluentui/react-hooks';
+import { customBlockQuoteStyle } from './CustomStyles';
 
 interface IThemed {
     palette: IPalette;
@@ -82,6 +83,13 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     const [isOrderedListActive, setIsOrderedListActive] = useState<boolean>(false);
     /** Whether the unordered list style is currently active or not. */
     const [isUnorderedListActive, setIsUnorderedListActive] = useState<boolean>(false);
+    /** Whether the strike through style is currently active or not. */
+    const [isStrikeThroughActive, setIsStrikeThroughActive] = useState<boolean>(false);
+    /** Whether the blockquote style is currently active or not. */
+    const [isBlockquoteActive, setIsBlockquoteActive] = useState<boolean>(false);
+    /** Whether the code block style is currently active or not. */
+    const [isCodeBlockActive, setIsCodeBlockActive] = useState<boolean>(false);
+
     /** The current value of the url input. */
     const [urlValue, setUrlValue] = useState<string>('');
     /** Whether the url input is visible or not. */
@@ -164,6 +172,20 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
     );
 
     /**
+     * Function to apply custom block styles.
+     *
+     * @param {ContentBlock} contentBlock The content block to format.
+     * @returns {string} The CSS classes to apply.
+     */
+    const blockStyleFn = (contentBlock: ContentBlock): string => {
+        const type = contentBlock.getType();
+        if (type === 'blockquote') {
+            return customBlockQuoteStyle;
+        }
+        return '';
+    };
+
+    /**
      * Handle what happens when the user press tab.
      *
      * @param {KeyboardEvent} event The occurred keyboard event.
@@ -196,6 +218,14 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
      */
     const onUnderlineMouseDown = () => {
         applyInlineStyle(editorState, setEditorState, 'UNDERLINE');
+        setFocusIntoEditor();
+    };
+
+    /**
+     * Mouse down handler to apply UNDERLINE style.
+     */
+    const onStrikeThroughMouseDown = () => {
+        applyInlineStyle(editorState, setEditorState, 'STRIKETHROUGH');
         setFocusIntoEditor();
     };
 
@@ -243,6 +273,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
         setIsBoldActive(currentInlineStyle.has('BOLD'));
         setIsItalicActive(currentInlineStyle.has('ITALIC'));
         setIsUnderlineActive(currentInlineStyle.has('UNDERLINE'));
+        setIsStrikeThroughActive(currentInlineStyle.has('STRIKETHROUGH'));
         // Get the selection.
         const currentSelection = editorState.getSelection();
         // Get the anchor key.
@@ -254,6 +285,8 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
         const currentBlockType = currentContentBlock.getType();
         setIsUnorderedListActive(currentBlockType === 'unordered-list-item');
         setIsOrderedListActive(currentBlockType === 'ordered-list-item');
+        setIsBlockquoteActive(currentBlockType === 'blockquote');
+        setIsCodeBlockActive(currentBlockType === 'code-block');
         if (currentBlockType === 'unstyled') {
             setSelectedHeading('paragraph');
             return;
@@ -358,6 +391,14 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                             }}
                         />
                     </TooltipHost>
+                    <IconButton
+                        styles={{ root: { backgroundColor: isStrikeThroughActive ? theme.palette.neutralQuaternary : 'unset', marginRight: '5px', color: theme.palette.black } }}
+                        iconProps={{ iconName: 'Strikethrough' }}
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                            onStrikeThroughMouseDown();
+                        }}
+                    />
                 </ControlSection>
                 <ControlSection>
                     <IconButton
@@ -394,6 +435,24 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             const e: any = { preventDefault: () => null };
                             setEditorState(RichUtils.onTab(e, editorState, maxIntend));
+                        }}
+                    />
+                </ControlSection>
+                <ControlSection>
+                    <IconButton
+                        styles={{ root: { backgroundColor: isBlockquoteActive ? theme.palette.neutralQuaternary : 'unset', marginRight: '5px', color: theme.palette.black } }}
+                        iconProps={{ iconName: 'RightDoubleQuote' }}
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                            applyBlockStyle(editorState, setEditorState, 'blockquote');
+                        }}
+                    />
+                    <IconButton
+                        styles={{ root: { backgroundColor: isCodeBlockActive ? theme.palette.neutralQuaternary : 'unset', marginRight: '5px', color: theme.palette.black } }}
+                        iconProps={{ iconName: 'Code' }}
+                        onMouseDown={(event) => {
+                            event.preventDefault();
+                            applyBlockStyle(editorState, setEditorState, 'code-block');
                         }}
                     />
                 </ControlSection>
@@ -462,6 +521,7 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                     onChange={setEditorState}
                     handleKeyCommand={handleKeyCommand}
                     onTab={onTab}
+                    blockStyleFn={blockStyleFn}
                 />
             </EditorTextfieldWrapper>
         </EditorContainer>
