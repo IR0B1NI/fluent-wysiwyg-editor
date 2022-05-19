@@ -328,7 +328,13 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                             setFocusIntoEditor();
                         }}
                     />
-                    <DefaultButton text="Abort" onClick={() => setIsUrlInputVisible(false)} />
+                    <DefaultButton
+                        text="Abort"
+                        onClick={() => {
+                            setIsUrlInputVisible(false);
+                            setUrlValue('');
+                        }}
+                    />
                 </DialogFooter>
             </Dialog>
             <ToolbarContainer palette={theme.palette}>
