@@ -18,6 +18,8 @@ const EditorContainer = styled.div<IThemed>`
     display: flex;
     flex: 1;
     flex-direction: column;
+    max-width: inherit;
+    overflow: hidden;
 `;
 
 const ToolbarContainer = styled.div<IThemed>`
@@ -328,7 +330,13 @@ export const TextEditor: FunctionComponent<ITextEditor> = (props) => {
                             setFocusIntoEditor();
                         }}
                     />
-                    <DefaultButton text="Abort" onClick={() => setIsUrlInputVisible(false)} />
+                    <DefaultButton
+                        text="Abort"
+                        onClick={() => {
+                            setIsUrlInputVisible(false);
+                            setUrlValue('');
+                        }}
+                    />
                 </DialogFooter>
             </Dialog>
             <ToolbarContainer palette={theme.palette}>
