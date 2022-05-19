@@ -18,6 +18,8 @@ const EditorContainer = styled.div<IThemed>`
     display: flex;
     flex: 1;
     flex-direction: column;
+    max-width: inherit;
+    overflow: hidden;
 `;
 
 const ToolbarContainer = styled.div<IThemed>`
